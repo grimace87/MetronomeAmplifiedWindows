@@ -70,6 +70,9 @@
     <ClCompile Include="Content\MainSceneRenderer.cpp">
       <Filter>Content</Filter>
     </ClCompile>
+    <ClCompile Include="Common\WICTextureLoader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -77,6 +80,9 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Content\MainSceneRenderer.h">
       <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\WICTextureLoader.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

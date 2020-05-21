@@ -15,9 +15,9 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	// TODO: Replace this with your app's content initialization.
-	m_sceneRenderer = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources));
-
-	m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
+	//m_sceneRenderer = std::unique_ptr<Sample3DSceneRenderer>(new Sample3DSceneRenderer(m_deviceResources));
+	//m_fpsTextRenderer = std::unique_ptr<SampleFpsTextRenderer>(new SampleFpsTextRenderer(m_deviceResources));
+	m_mainScene = std::unique_ptr<MainSceneRenderer>(new MainSceneRenderer(m_deviceResources));
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
@@ -37,7 +37,8 @@ MetronomeAmplifiedWindowsMain::~MetronomeAmplifiedWindowsMain()
 void MetronomeAmplifiedWindowsMain::CreateWindowSizeDependentResources() 
 {
 	// TODO: Replace this with the size-dependent initialization of your app's content.
-	m_sceneRenderer->CreateWindowSizeDependentResources();
+	//m_sceneRenderer->CreateWindowSizeDependentResources();
+	m_mainScene->CreateWindowSizeDependentResources();
 }
 
 // Updates the application state once per frame.
@@ -47,8 +48,9 @@ void MetronomeAmplifiedWindowsMain::Update()
 	m_timer.Tick([&]()
 	{
 		// TODO: Replace this with your app's content update functions.
-		m_sceneRenderer->Update(m_timer);
-		m_fpsTextRenderer->Update(m_timer);
+		//m_sceneRenderer->Update(m_timer);
+		//m_fpsTextRenderer->Update(m_timer);
+		m_mainScene->Update(m_timer);
 	});
 }
 
@@ -73,13 +75,14 @@ bool MetronomeAmplifiedWindowsMain::Render()
 	context->OMSetRenderTargets(1, targets, m_deviceResources->GetDepthStencilView());
 
 	// Clear the back buffer and depth stencil view.
-	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::CornflowerBlue);
+	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::Black);
 	context->ClearDepthStencilView(m_deviceResources->GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	// Render the scene objects.
 	// TODO: Replace this with your app's content rendering functions.
-	m_sceneRenderer->Render();
-	m_fpsTextRenderer->Render();
+	//m_sceneRenderer->Render();
+	//m_fpsTextRenderer->Render();
+	m_mainScene->Render();
 
 	return true;
 }
@@ -87,14 +90,16 @@ bool MetronomeAmplifiedWindowsMain::Render()
 // Notifies renderers that device resources need to be released.
 void MetronomeAmplifiedWindowsMain::OnDeviceLost()
 {
-	m_sceneRenderer->ReleaseDeviceDependentResources();
-	m_fpsTextRenderer->ReleaseDeviceDependentResources();
+	//m_sceneRenderer->ReleaseDeviceDependentResources();
+	//m_fpsTextRenderer->ReleaseDeviceDependentResources();
+	m_mainScene->ReleaseDeviceDependentResources();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void MetronomeAmplifiedWindowsMain::OnDeviceRestored()
 {
-	m_sceneRenderer->CreateDeviceDependentResources();
-	m_fpsTextRenderer->CreateDeviceDependentResources();
+	//m_sceneRenderer->CreateDeviceDependentResources();
+	//m_fpsTextRenderer->CreateDeviceDependentResources();
+	m_mainScene->CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
 }

@@ -2,6 +2,7 @@
 #include "MainSceneRenderer.h"
 
 #include "..\Common\DirectXHelper.h"
+#include "..\Common\WICTextureLoader.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -68,6 +69,12 @@ void MainSceneRenderer::Render()
 		0
 	);
 
+	// Set the texture in the pixel shader
+	context->PSSetShaderResources(0, 1, m_woodenTextureView.GetAddressOf());
+
+	// Set the sampler state
+	context->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+
 	// Draw the objects.
 	context->Draw(
 		m_vertexCount,
@@ -80,6 +87,9 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 	// Load shaders asynchronously.
 	auto loadVSTask = DX::ReadDataAsync(L"AlphaTextureVertexShader.cso");
 	auto loadPSTask = DX::ReadDataAsync(L"AlphaTexturePixelShader.cso");
+
+	// Load an image file asynchronously
+	auto loadTextureImageTask = DX::ReadDataAsync(L"Assets\\Textures\\wood_bg_texture.jpg");
 
 	// After the vertex shader file is loaded, create the shader and input layout.
 	auto createVSTask = loadVSTask.then([this](const std::vector<byte>& fileData) {
@@ -95,7 +105,7 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 		static const D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};
 
 		DX::ThrowIfFailed(
@@ -122,17 +132,17 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 		});
 
 	// Once both shaders are loaded, create the mesh.
-	auto createCubeTask = (createPSTask && createVSTask).then([this]() {
+	auto createVertexBufferTask = (createPSTask && createVSTask).then([this]() {
 
 		// Load mesh vertices. Each vertex has a position and a color.
-		static const VertexPositionColor paneVertices[] =
+		static const VertexTexCoord paneVertices[] =
 		{
-			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(-1.0f,  1.0f,  0.0f), XMFLOAT3(0.0f, 0.0f, 1.0f)},
-			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(0.0f, 0.8f, 0.8f)},
-			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(0.0f, 0.8f, 0.8f)},
-			{XMFLOAT3( 1.0f, -1.0f,  0.0f), XMFLOAT3(0.4f, 1.0f, 0.0f)},
-			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)}
+			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
+			{XMFLOAT3(-1.0f,  1.0f,  0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
+			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
+			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
+			{XMFLOAT3( 1.0f, -1.0f,  0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
+			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f)}
 		};
 
 		m_vertexCount = ARRAYSIZE(paneVertices);
@@ -151,8 +161,53 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 		);
 		});
 
+	// After the image file is loaded, decode it and create a texture
+	auto createTextureTask = loadTextureImageTask.then([this](const std::vector<byte>& fileData) {
+
+		// Decode the image data and create the Direct3D texture and texture view
+		DX::ThrowIfFailed(
+			CreateWICTextureFromMemory(
+				m_deviceResources->GetD3DDevice(),
+				m_deviceResources->GetD3DDeviceContext(),
+				fileData.data(),
+				fileData.size(),
+				&m_woodenTexture,
+				&m_woodenTextureView)
+		);
+
+		// Create the sampler state
+		D3D11_SAMPLER_DESC desc;
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.MipLODBias = 0.0f;
+		desc.MaxAnisotropy = 1;
+		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		desc.BorderColor[0] = 0;
+		desc.BorderColor[1] = 0;
+		desc.BorderColor[2] = 0;
+		desc.BorderColor[3] = 0;
+		desc.MinLOD = 0;
+		desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		DX::ThrowIfFailed(
+			m_deviceResources->GetD3DDevice()->CreateSamplerState(
+				&desc,
+				&m_samplerState)
+		);
+		});
+
 	// Once the cube is loaded, the object is ready to be rendered.
-	createCubeTask.then([this]() {
+	// Check if exceptions occurred first.
+	(createVertexBufferTask && createTextureTask).then([this](Concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (Platform::COMException^ e) {
+			OutputDebugString(L"Oi mate whats this");
+			throw e;
+		}
 		m_loadingComplete = true;
 		});
 }
@@ -160,8 +215,11 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 void MainSceneRenderer::ReleaseDeviceDependentResources()
 {
 	m_loadingComplete = false;
+	m_samplerState.Reset();
 	m_vertexShader.Reset();
 	m_inputLayout.Reset();
 	m_pixelShader.Reset();
 	m_vertexBuffer.Reset();
+	m_woodenTexture.Reset();
+	m_woodenTextureView.Reset();
 }

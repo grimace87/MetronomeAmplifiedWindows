@@ -10,10 +10,17 @@ namespace MetronomeAmplifiedWindows
 		DirectX::XMFLOAT4X4 projection;
 	};
 
-	// Used to send per-vertex data to the vertex shader.
+	// Used to send position and color per-vertex data to the vertex shader.
 	struct VertexPositionColor
 	{
 		DirectX::XMFLOAT3 pos;
 		DirectX::XMFLOAT3 color;
+	};
+
+	// Used to send position and texture coordinate per-vertex data to the vertex shader
+	struct VertexTexCoord
+	{
+		DirectX::XMFLOAT3 pos;
+		DirectX::XMFLOAT3 tex;
 	};
 }

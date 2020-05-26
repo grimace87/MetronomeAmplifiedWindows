@@ -62,6 +62,9 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{5a332e77-8dc3-4826-a800-93eb45003aa9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -88,6 +91,9 @@
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Textures\wood_bg_texture.jpg">
+      <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

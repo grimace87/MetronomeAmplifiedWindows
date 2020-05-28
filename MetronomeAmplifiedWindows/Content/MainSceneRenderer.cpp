@@ -9,6 +9,21 @@ using namespace MetronomeAmplifiedWindows;
 using namespace DirectX;
 using namespace Windows::Foundation;
 
+// Puts the vertex data for a square into a float array, assuming each vertex fills 6 floats [x, y, z, s, t, unused]
+void MainSceneRenderer::putSquare(VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2)
+{
+	VertexTexCoord squareVertices[] =
+	{
+		{XMFLOAT3(x1, y1, 0.0f), XMFLOAT3(s1, t1, 0.0f)},
+		{XMFLOAT3(x2, y1, 0.0f), XMFLOAT3(s2, t1, 0.0f)},
+		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
+		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
+		{XMFLOAT3(x1, y2, 0.0f), XMFLOAT3(s1, t2, 0.0f)},
+		{XMFLOAT3(x1, y1, 0.0f), XMFLOAT3(s1, t1, 0.0f)}
+	};
+	std::copy(squareVertices, squareVertices + 6, &buffer[index]);
+}
+
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 MainSceneRenderer::MainSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_loadingComplete(false),
@@ -134,24 +149,17 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 	// Once both shaders are loaded, create the mesh.
 	auto createVertexBufferTask = (createPSTask && createVSTask).then([this]() {
 
-		// Load mesh vertices. Each vertex has a position and a color.
-		static const VertexTexCoord paneVertices[] =
-		{
-			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(-1.0f,  1.0f,  0.0f), XMFLOAT3(0.0f, 1.0f, 0.0f)},
-			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
-			{XMFLOAT3( 1.0f,  1.0f,  0.0f), XMFLOAT3(1.0f, 1.0f, 0.0f)},
-			{XMFLOAT3( 1.0f, -1.0f,  0.0f), XMFLOAT3(1.0f, 0.0f, 0.0f)},
-			{XMFLOAT3(-1.0f, -1.0f,  0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f)}
-		};
+		// Load mesh vertices. Each vertex has a position and a texture coordinate, plus a 4-byte padding.
+		VertexTexCoord sceneVertices[6];
+		putSquare(sceneVertices, 0, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-		m_vertexCount = ARRAYSIZE(paneVertices);
+		m_vertexCount = 6;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
-		vertexBufferData.pSysMem = paneVertices;
+		vertexBufferData.pSysMem = sceneVertices;
 		vertexBufferData.SysMemPitch = 0;
 		vertexBufferData.SysMemSlicePitch = 0;
-		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(paneVertices), D3D11_BIND_VERTEX_BUFFER);
+		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(sceneVertices), D3D11_BIND_VERTEX_BUFFER);
 		DX::ThrowIfFailed(
 			m_deviceResources->GetD3DDevice()->CreateBuffer(
 				&vertexBufferDesc,

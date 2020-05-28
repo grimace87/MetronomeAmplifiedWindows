@@ -17,6 +17,9 @@ namespace MetronomeAmplifiedWindows
 		void Render();
 
 	private:
+		// Utility functions
+		static void putSquare(VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
+
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 

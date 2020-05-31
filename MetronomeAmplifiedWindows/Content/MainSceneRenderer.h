@@ -4,6 +4,8 @@
 #include "ShaderStructures.h"
 #include "..\Common\StepTimer.h"
 
+#include <vector>
+
 namespace MetronomeAmplifiedWindows
 {
 	class MainSceneRenderer
@@ -18,7 +20,9 @@ namespace MetronomeAmplifiedWindows
 
 	private:
 		// Utility functions
-		static void putSquare(VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
+		void putSquare(VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
+		std::vector<byte> MainSceneRenderer::makeOverlayTextureData(_Out_ int* width, _Out_ int* height);
+		void CreateTextureFromRawPixelData(std::vector<byte>& pixelData, int width, int height, ID3D11Resource** texture, ID3D11ShaderResourceView** textureView);
 
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
@@ -30,13 +34,19 @@ namespace MetronomeAmplifiedWindows
 		Microsoft::WRL::ComPtr<ID3D11PixelShader>	      m_pixelShader;
 		Microsoft::WRL::ComPtr<ID3D11Resource>            m_woodenTexture;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>  m_woodenTextureView;
-		Microsoft::WRL::ComPtr<ID3D11SamplerState>        m_samplerState;
+		Microsoft::WRL::ComPtr<ID3D11Resource>            m_overlayTexture;
+		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>  m_overlayTextureView;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>        m_samplerStateLinear;
+		Microsoft::WRL::ComPtr<ID3D11SamplerState>        m_samplerStatePoint;
+		Microsoft::WRL::ComPtr<ID3D11BlendState>          m_blendState;
 
 		// System resources for geometry (e.g. shader structure for cbuffer if using one).
-		uint32	m_vertexCount;
+		uint32 m_backgroundVertexCount;
+		uint32 m_overlayVertexCount;
 
 		// Variables used with the rendering loop.
-		bool	m_loadingComplete;
+		bool m_deviceDependentLoadingComplete;
+		bool m_windowDependentLoadingComplete;
 	};
 }
 

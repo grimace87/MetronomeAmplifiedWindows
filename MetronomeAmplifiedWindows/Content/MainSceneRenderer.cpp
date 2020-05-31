@@ -24,19 +24,105 @@ void MainSceneRenderer::putSquare(VertexTexCoord buffer[], int index, float x1, 
 	std::copy(squareVertices, squareVertices + 6, &buffer[index]);
 }
 
+std::vector<byte> MainSceneRenderer::makeOverlayTextureData(_Out_ int* width, _Out_ int* height)
+{
+	// Determine sizes and create the data array
+	const float screenDpi = m_deviceResources->GetDpi();
+	const float cornerRadiusLogicalInches = 0.15f;
+	const byte alphaLevel = 0x80;
+	const int cornerRadiusPixels = (int)(cornerRadiusLogicalInches * screenDpi);
+	const int rowStrideBytes = 4 * 2 * cornerRadiusPixels;
+	const int sectionOffsetBytes = 4 * cornerRadiusPixels;
+	std::vector<byte> textureData;
+	textureData.resize(rowStrideBytes * cornerRadiusPixels);
+	std::fill(textureData.begin(), textureData.end(), 0xff);
+
+	// Output dimensions
+	*width = 2 * cornerRadiusPixels;
+	*height = cornerRadiusPixels;
+
+	// Generate the left section (rounded corner)
+	for (int j = 0; j < cornerRadiusPixels; j++) {
+		int index = j * rowStrideBytes;
+		const int transparentPixels = (int)(cornerRadiusPixels - sqrt(max(0.0, 2.0 * j * cornerRadiusPixels - j * j)));
+		for (int i = 0; i < cornerRadiusPixels; i++) {
+			const byte pixelAlpha = i <= transparentPixels ? 0 : alphaLevel;
+			textureData[index + 3] = pixelAlpha;
+			index += 4;
+		}
+	}
+
+	// Generate the right section (solid colour)
+	for (int j = 0; j < cornerRadiusPixels; j++) {
+		int index = j * rowStrideBytes + sectionOffsetBytes;
+		for (int i = 0; i < cornerRadiusPixels; i++) {
+			textureData[index + 3] = alphaLevel;
+			index += 4;
+		}
+	}
+
+	// Return the buffer
+	return textureData;
+}
+
+// Function that creates a texture from raw pixel data (assumes RGBA format)
+void MainSceneRenderer::CreateTextureFromRawPixelData(std::vector<byte>& pixelData, int width, int height, ID3D11Resource** texture, ID3D11ShaderResourceView** textureView)
+{
+	// Describe texture
+	D3D11_SUBRESOURCE_DATA subData = { (const void*)pixelData.data(), width * 4 * sizeof(byte), 0 };
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = width;
+	desc.Height = height;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	desc.MiscFlags = 0;
+	desc.CPUAccessFlags = 0;
+
+	// Create resource
+	ID3D11Texture2D* tex;
+	DX::ThrowIfFailed(
+	m_deviceResources->GetD3DDevice()->CreateTexture2D(
+		&desc,
+		&subData,
+		&tex)
+	);
+
+	// Describe texture view
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
+	viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	viewDesc.Texture2D.MipLevels = 1;
+	viewDesc.Texture2D.MostDetailedMip = 0;
+
+	// Create texture view
+	ID3D11ShaderResourceView* texView;
+	DX::ThrowIfFailed(
+		m_deviceResources->GetD3DDevice()->CreateShaderResourceView(
+			tex,
+			&viewDesc,
+			&texView)
+	);
+
+	// Assign output parameters
+	*texture = tex;
+	*textureView = texView;
+}
+
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 MainSceneRenderer::MainSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
-	m_loadingComplete(false),
-	m_vertexCount(0),
+	m_deviceDependentLoadingComplete(false),
+	m_windowDependentLoadingComplete(false),
+	m_backgroundVertexCount(0),
+	m_overlayVertexCount(0),
 	m_deviceResources(deviceResources)
 {
 	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
-}
-
-// Initializes view parameters when the window size changes.
-void MainSceneRenderer::CreateWindowSizeDependentResources()
-{
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
@@ -48,7 +134,7 @@ void MainSceneRenderer::Update(DX::StepTimer const& timer)
 void MainSceneRenderer::Render()
 {
 	// Loading is asynchronous. Only draw geometry after it's loaded.
-	if (!m_loadingComplete)
+	if (!m_deviceDependentLoadingComplete || !m_windowDependentLoadingComplete)
 	{
 		return;
 	}
@@ -84,16 +170,32 @@ void MainSceneRenderer::Render()
 		0
 	);
 
+	// Set the blend state
+	UINT sampleMask = 0xffffffff;
+	context->OMSetBlendState(m_blendState.Get(), NULL, sampleMask);
+
 	// Set the texture in the pixel shader
 	context->PSSetShaderResources(0, 1, m_woodenTextureView.GetAddressOf());
 
 	// Set the sampler state
-	context->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+	context->PSSetSamplers(0, 1, m_samplerStateLinear.GetAddressOf());
 
 	// Draw the objects.
 	context->Draw(
-		m_vertexCount,
+		m_backgroundVertexCount,
 		0
+	);
+
+	// Set the texture in the pixel shader
+	context->PSSetShaderResources(0, 1, m_overlayTextureView.GetAddressOf());
+
+	// Set the sampler state
+	context->PSSetSamplers(0, 1, m_samplerStatePoint.GetAddressOf());
+
+	// Draw the objects.
+	context->Draw(
+		m_overlayVertexCount,
+		m_backgroundVertexCount
 	);
 }
 
@@ -146,14 +248,122 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 		);
 		});
 
-	// Once both shaders are loaded, create the mesh.
-	auto createVertexBufferTask = (createPSTask && createVSTask).then([this]() {
+	// After the image file is loaded, decode it and create a texture
+	auto createTextureTask = loadTextureImageTask.then([this](const std::vector<byte>& fileData) {
+
+		// Decode the image data and create the Direct3D texture and texture view
+		DX::ThrowIfFailed(
+			CreateWICTextureFromMemory(
+				m_deviceResources->GetD3DDevice(),
+				m_deviceResources->GetD3DDeviceContext(),
+				fileData.data(),
+				fileData.size(),
+				&m_woodenTexture,
+				&m_woodenTextureView)
+		);
+
+		// Create the linear sampler state
+		D3D11_SAMPLER_DESC samplerDesc;
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		samplerDesc.MipLODBias = 0.0f;
+		samplerDesc.MaxAnisotropy = 1;
+		samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		samplerDesc.BorderColor[0] = 0;
+		samplerDesc.BorderColor[1] = 0;
+		samplerDesc.BorderColor[2] = 0;
+		samplerDesc.BorderColor[3] = 0;
+		samplerDesc.MinLOD = 0;
+		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		DX::ThrowIfFailed(
+			m_deviceResources->GetD3DDevice()->CreateSamplerState(
+				&samplerDesc,
+				&m_samplerStateLinear)
+		);
+
+		// Create the point sampler state, as a slight variation of the previous
+		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+		DX::ThrowIfFailed(
+			m_deviceResources->GetD3DDevice()->CreateSamplerState(
+				&samplerDesc,
+				&m_samplerStatePoint)
+		);
+
+		// Create the blend state
+		D3D11_BLEND_DESC blendDesc;
+		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+		blendDesc.AlphaToCoverageEnable = FALSE;
+		blendDesc.IndependentBlendEnable = FALSE;
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+		DX::ThrowIfFailed(
+			m_deviceResources->GetD3DDevice()->CreateBlendState(
+				&blendDesc,
+				&m_blendState)
+		);
+		});
+
+	// Check if exceptions occurred, if not then signal this stuff loaded okay.
+	(createVSTask && createPSTask && createTextureTask).then([this](Concurrency::task<void> t) {
+		try {
+			t.get();
+		}
+		catch (Platform::COMException^ e) {
+			OutputDebugString(L"Oi mate whats this");
+			throw e;
+		}
+
+		m_deviceDependentLoadingComplete = true;
+		});
+}
+
+// Initializes view parameters when the window size changes.
+void MainSceneRenderer::CreateWindowSizeDependentResources()
+{
+	using namespace Concurrency;
+
+	// Coordinates used in the vertex buffer depend on the window size
+	auto createVertexBufferTask = create_task([this] {
+
+		// Get necessary coordinates to draw the overlay, in normalised coordinates (range of -1 to 1)
+		Size size = m_deviceResources->GetOutputSize();
+		const float marginLogicalInches = 0.15f;
+		const float dpi = m_deviceResources->GetDpi();
+		const float marginUnitsW = 2.0f * (marginLogicalInches * dpi) / size.Width;
+		const float marginUnitsH = 2.0f * (marginLogicalInches * dpi) / size.Height;
+
+		const float w1 = -1.0f + marginUnitsW;
+		const float w2 = w1 + marginUnitsW;
+		const float w4 = 1.0f - marginUnitsW;
+		const float w3 = w4 - marginUnitsW;
+
+		const float h1 = -1.0f + marginUnitsH;
+		const float h2 = h1 + marginUnitsH;
+		const float h4 = 1.0f - marginUnitsH;
+		const float h3 = h4 - marginUnitsH;
 
 		// Load mesh vertices. Each vertex has a position and a texture coordinate, plus a 4-byte padding.
-		VertexTexCoord sceneVertices[6];
-		putSquare(sceneVertices, 0, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+		VertexTexCoord sceneVertices[48];
+		putSquare(sceneVertices, 0, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+		putSquare(sceneVertices, 6, w1, h2, w2, h1, 0.0f, 1.0f, 0.5f, 0.0f);
+		putSquare(sceneVertices, 12, w2, h2, w3, h1, 0.5f, 1.0f, 1.0f, 0.0f);
+		putSquare(sceneVertices, 18, w3, h2, w4, h1, 0.5f, 1.0f, 0.0f, 0.0f);
+		putSquare(sceneVertices, 24, w1, h3, w4, h2, 0.5f, 0.0f, 1.0f, 1.0f);
+		putSquare(sceneVertices, 30, w1, h4, w2, h3, 0.0f, 0.0f, 0.5f, 1.0f);
+		putSquare(sceneVertices, 36, w2, h4, w3, h3, 0.5f, 0.0f, 1.0f, 1.0f);
+		putSquare(sceneVertices, 42, w3, h4, w4, h3, 0.5f, 0.0f, 0.0f, 1.0f);
 
-		m_vertexCount = 6;
+		m_backgroundVertexCount = 6;
+		m_overlayVertexCount = 42;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;
@@ -169,45 +379,17 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 		);
 		});
 
-	// After the image file is loaded, decode it and create a texture
-	auto createTextureTask = loadTextureImageTask.then([this](const std::vector<byte>& fileData) {
+	// Create the dpi-dependent texture
+	auto createTextureTask = create_task([this] {
 
-		// Decode the image data and create the Direct3D texture and texture view
-		DX::ThrowIfFailed(
-			CreateWICTextureFromMemory(
-				m_deviceResources->GetD3DDevice(),
-				m_deviceResources->GetD3DDeviceContext(),
-				fileData.data(),
-				fileData.size(),
-				&m_woodenTexture,
-				&m_woodenTextureView)
-		);
-
-		// Create the sampler state
-		D3D11_SAMPLER_DESC desc;
-		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-		desc.MipLODBias = 0.0f;
-		desc.MaxAnisotropy = 1;
-		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-		desc.BorderColor[0] = 0;
-		desc.BorderColor[1] = 0;
-		desc.BorderColor[2] = 0;
-		desc.BorderColor[3] = 0;
-		desc.MinLOD = 0;
-		desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-		DX::ThrowIfFailed(
-			m_deviceResources->GetD3DDevice()->CreateSamplerState(
-				&desc,
-				&m_samplerState)
-		);
+		int width;
+		int height;
+		std::vector<byte> overlayData = makeOverlayTextureData(&width, &height);
+		CreateTextureFromRawPixelData(overlayData, width, height, &m_overlayTexture, &m_overlayTextureView);
 		});
 
-	// Once the cube is loaded, the object is ready to be rendered.
-	// Check if exceptions occurred first.
+
+	// Check if exceptions occurred, if not then signal this stuff loaded okay.
 	(createVertexBufferTask && createTextureTask).then([this](Concurrency::task<void> t) {
 		try {
 			t.get();
@@ -216,18 +398,23 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 			OutputDebugString(L"Oi mate whats this");
 			throw e;
 		}
-		m_loadingComplete = true;
+
+		m_windowDependentLoadingComplete = true;
 		});
 }
 
 void MainSceneRenderer::ReleaseDeviceDependentResources()
 {
-	m_loadingComplete = false;
-	m_samplerState.Reset();
+	m_deviceDependentLoadingComplete = false;
+	m_windowDependentLoadingComplete = false;
+	m_samplerStateLinear.Reset();
+	m_samplerStatePoint.Reset();
 	m_vertexShader.Reset();
 	m_inputLayout.Reset();
 	m_pixelShader.Reset();
 	m_vertexBuffer.Reset();
 	m_woodenTexture.Reset();
 	m_woodenTextureView.Reset();
+	m_overlayTexture.Reset();
+	m_overlayTextureView.Reset();
 }

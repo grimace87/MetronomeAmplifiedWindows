@@ -15,10 +15,10 @@ void MainSceneRenderer::putSquare(VertexTexCoord buffer[], int index, float x1, 
 	VertexTexCoord squareVertices[] =
 	{
 		{XMFLOAT3(x1, y1, 0.0f), XMFLOAT3(s1, t1, 0.0f)},
-		{XMFLOAT3(x2, y1, 0.0f), XMFLOAT3(s2, t1, 0.0f)},
-		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
-		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
 		{XMFLOAT3(x1, y2, 0.0f), XMFLOAT3(s1, t2, 0.0f)},
+		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
+		{XMFLOAT3(x2, y2, 0.0f), XMFLOAT3(s2, t2, 0.0f)},
+		{XMFLOAT3(x2, y1, 0.0f), XMFLOAT3(s2, t1, 0.0f)},
 		{XMFLOAT3(x1, y1, 0.0f), XMFLOAT3(s1, t1, 0.0f)}
 	};
 	std::copy(squareVertices, squareVertices + 6, &buffer[index]);
@@ -28,20 +28,20 @@ std::vector<byte> MainSceneRenderer::makeOverlayTextureData(_Out_ int* width, _O
 {
 	// Determine sizes and create the data array
 	const float screenDpi = m_deviceResources->GetDpi();
-	const float cornerRadiusLogicalInches = 0.15f;
+	const float cornerRadiusLogicalInches = 0.25f;
 	const byte alphaLevel = 0x80;
 	const int cornerRadiusPixels = (int)(cornerRadiusLogicalInches * screenDpi);
 	const int rowStrideBytes = 4 * 2 * cornerRadiusPixels;
 	const int sectionOffsetBytes = 4 * cornerRadiusPixels;
 	std::vector<byte> textureData;
-	textureData.resize(rowStrideBytes * cornerRadiusPixels);
+	textureData.resize(rowStrideBytes * cornerRadiusPixels * 2);
 	std::fill(textureData.begin(), textureData.end(), 0xff);
 
 	// Output dimensions
 	*width = 2 * cornerRadiusPixels;
-	*height = cornerRadiusPixels;
+	*height = 2 * cornerRadiusPixels;
 
-	// Generate the left section (rounded corner)
+	// Generate the top-left section (rounded corner)
 	for (int j = 0; j < cornerRadiusPixels; j++) {
 		int index = j * rowStrideBytes;
 		const int transparentPixels = (int)(cornerRadiusPixels - sqrt(max(0.0, 2.0 * j * cornerRadiusPixels - j * j)));
@@ -52,11 +52,31 @@ std::vector<byte> MainSceneRenderer::makeOverlayTextureData(_Out_ int* width, _O
 		}
 	}
 
-	// Generate the right section (solid colour)
+	// Generate the top-right section (solid colour)
 	for (int j = 0; j < cornerRadiusPixels; j++) {
 		int index = j * rowStrideBytes + sectionOffsetBytes;
 		for (int i = 0; i < cornerRadiusPixels; i++) {
 			textureData[index + 3] = alphaLevel;
+			index += 4;
+		}
+	}
+
+	// Generate the bottom-left section (inner corner)
+	for (int j = 0; j < cornerRadiusPixels; j++) {
+		int index = (cornerRadiusPixels + j) * rowStrideBytes;
+		const int transparentPixels = (int)sqrt(max(0.0, 2.0 * j * cornerRadiusPixels - j * j));
+		for (int i = 0; i < cornerRadiusPixels; i++) {
+			const int pixelAlpha = i <= transparentPixels ? 0 : alphaLevel;
+			textureData[index + 3] = pixelAlpha;
+			index += 4;
+		}
+	}
+
+	// Generate the right section (fully transparent)
+	for (int j = 0; j < cornerRadiusPixels; j++) {
+		int index = (cornerRadiusPixels + j) * rowStrideBytes + sectionOffsetBytes;
+		for (int i = 0; i < cornerRadiusPixels; i++) {
+			textureData[index + 3] = 0;
 			index += 4;
 		}
 	}
@@ -336,34 +356,61 @@ void MainSceneRenderer::CreateWindowSizeDependentResources()
 
 		// Get necessary coordinates to draw the overlay, in normalised coordinates (range of -1 to 1)
 		Size size = m_deviceResources->GetOutputSize();
-		const float marginLogicalInches = 0.15f;
+		const float marginLogicalInches = 0.25f;
 		const float dpi = m_deviceResources->GetDpi();
 		const float marginUnitsW = 2.0f * (marginLogicalInches * dpi) / size.Width;
 		const float marginUnitsH = 2.0f * (marginLogicalInches * dpi) / size.Height;
 
 		const float w1 = -1.0f + marginUnitsW;
 		const float w2 = w1 + marginUnitsW;
-		const float w4 = 1.0f - marginUnitsW;
+		const float w4 = -1.0f + (2.0f - 2.0f * marginUnitsW) / 3.0f;
 		const float w3 = w4 - marginUnitsW;
+		const float w5 = w4 + marginUnitsW;
+		const float w7 = 1.0f - (2.0f - 2.0f * marginUnitsW) / 3.0f;
+		const float w6 = w7 - marginUnitsW;
+		const float w8 = w7 + marginUnitsW;
+		const float w10 = 1.0f - marginUnitsW;
+		const float w9 = w10 - marginUnitsW;
 
 		const float h1 = -1.0f + marginUnitsH;
 		const float h2 = h1 + marginUnitsH;
-		const float h4 = 1.0f - marginUnitsH;
+		const float h4 = -1.0f + (2.0f - marginUnitsH) / 4.0f;
 		const float h3 = h4 - marginUnitsH;
+		const float h6 = 0.0f - marginUnitsH;
+		const float h5 = h6 - marginUnitsH;
 
 		// Load mesh vertices. Each vertex has a position and a texture coordinate, plus a 4-byte padding.
-		VertexTexCoord sceneVertices[48];
-		putSquare(sceneVertices, 0, -1.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-		putSquare(sceneVertices, 6, w1, h2, w2, h1, 0.0f, 1.0f, 0.5f, 0.0f);
-		putSquare(sceneVertices, 12, w2, h2, w3, h1, 0.5f, 1.0f, 1.0f, 0.0f);
-		putSquare(sceneVertices, 18, w3, h2, w4, h1, 0.5f, 1.0f, 0.0f, 0.0f);
-		putSquare(sceneVertices, 24, w1, h3, w4, h2, 0.5f, 0.0f, 1.0f, 1.0f);
-		putSquare(sceneVertices, 30, w1, h4, w2, h3, 0.0f, 0.0f, 0.5f, 1.0f);
-		putSquare(sceneVertices, 36, w2, h4, w3, h3, 0.5f, 0.0f, 1.0f, 1.0f);
-		putSquare(sceneVertices, 42, w3, h4, w4, h3, 0.5f, 0.0f, 0.0f, 1.0f);
+		VertexTexCoord sceneVertices[114];
+
+		putSquare(sceneVertices, 0, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+		putSquare(sceneVertices, 6, w1, h1, w2, h2, 0.0f, 0.0f, 0.5f, 0.5f);
+		putSquare(sceneVertices, 12, w2, h1, w3, h2, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 18, w3, h1, w4, h2, 0.5f, 0.0f, 0.0f, 0.5f);
+
+		putSquare(sceneVertices, 24, w7, h1, w8, h2, 0.0f, 0.0f, 0.5f, 0.5f);
+		putSquare(sceneVertices, 30, w8, h1, w9, h2, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 36, w9, h1, w10, h2, 0.5f, 0.0f, 0.0f, 0.5f);
+
+		putSquare(sceneVertices, 42, w1, h2, w2, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 48, w2, h3, w3, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 54, w3, h2, w4, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+
+		putSquare(sceneVertices, 60, w7, h2, w8, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 66, w8, h3, w9, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+		putSquare(sceneVertices, 72, w9, h2, w10, h4, 0.5f, 0.0f, 1.0f, 0.5f);
+
+		putSquare(sceneVertices, 78, w4, h3, w5, h4, 0.5f, 1.0f, 0.0f, 0.5f);
+		putSquare(sceneVertices, 84, w6, h3, w7, h4, 0.0f, 1.0f, 0.5f, 0.5f);
+
+		putSquare(sceneVertices, 90, w1, h4, w10, h5, 0.5f, 0.0f, 1.0f, 0.5f);
+
+		putSquare(sceneVertices, 96, w1, h5, w2, h6, 0.0f, 0.5f, 0.5f, 0.0f);
+		putSquare(sceneVertices, 102, w2, h5, w9, h6, 0.5f, 0.5f, 1.0f, 0.0f);
+		putSquare(sceneVertices, 108, w9, h5, w10, h6, 0.5f, 0.5f, 0.0f, 0.0f);
 
 		m_backgroundVertexCount = 6;
-		m_overlayVertexCount = 42;
+		m_overlayVertexCount = 108;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

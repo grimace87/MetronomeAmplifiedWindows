@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Content/ShaderCache.h"
+
 namespace DX
 {
 	// Provides an interface for an application that owns DeviceResources to be notified of the device being lost or created.
@@ -49,6 +51,12 @@ namespace DX
 		IWICImagingFactory2*		GetWicImagingFactory() const			{ return m_wicFactory.Get(); }
 		D2D1::Matrix3x2F			GetOrientationTransform2D() const		{ return m_orientationTransform2D; }
 
+		// Cache-related functions
+		void RequireShaders(std::vector<shader::ClassId> shaderIds);
+		shader::BaseShader* GetShader(shader::ClassId shaderId);
+		inline bool AreShadersFulfilled() { return m_shaderCache.AreShadersFulfilled(); }
+        void ClearShaderCache();
+
 	private:
 		void CreateDeviceIndependentResources();
 		void CreateDeviceResources();
@@ -96,5 +104,8 @@ namespace DX
 
 		// The IDeviceNotify can be held directly as it owns the DeviceResources.
 		IDeviceNotify* m_deviceNotify;
+
+		// Cached DirectX resources
+		cache::ShaderCache m_shaderCache;
 	};
 }

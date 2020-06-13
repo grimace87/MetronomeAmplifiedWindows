@@ -668,3 +668,15 @@ DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 	}
 	return rotation;
 }
+
+void DX::DeviceResources::RequireShaders(std::vector<shader::ClassId> shaderIds) {
+    m_shaderCache.RequireShaders(m_d3dDevice.Get(), m_d3dContext.Get(), shaderIds);
+}
+
+shader::BaseShader* DX::DeviceResources::GetShader(shader::ClassId shaderId) {
+	return m_shaderCache.GetShader(shaderId);
+}
+
+void DX::DeviceResources::ClearShaderCache() {
+    m_shaderCache.Clear();
+}

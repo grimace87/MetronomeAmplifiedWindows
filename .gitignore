@@ -4,3 +4,5 @@
 x64/
 x86/
 Generated Files/
+cmake-build-debug/
+out/

@@ -70,20 +70,19 @@ void MainSceneRenderer::Render()
 
 void MainSceneRenderer::CreateDeviceDependentResources()
 {
-	// Load shaders if needed
+	// Load shaders and textures if needed
     m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE });
-
-	// Load textures if needed
 	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE });
 }
 
 // Initializes view parameters when the window size changes.
 void MainSceneRenderer::CreateWindowSizeDependentResources()
 {
-	// Load textures if needed
-	m_deviceResources->RequireSizeDependentTextures({ texture::ClassId::OVERLAY_TEXTURE });
+	// Invalidate size-dependent resources
+	m_deviceResources->InvalidateSizeDependentResources();
 
-	// Load vertex buffers if needed
+	// (Re-)create any size-dependent resources
+	m_deviceResources->RequireSizeDependentTextures({ texture::ClassId::OVERLAY_TEXTURE });
 	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG });
 }
 

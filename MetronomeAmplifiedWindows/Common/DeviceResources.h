@@ -78,6 +78,9 @@ namespace DX
 		inline bool AreVertexBuffersFulfilled() { return m_vertexBufferCache.AreVertexBuffersFulfilled(); }
 		void ClearVertexBufferCache();
 
+		// Manage resources invalidation
+		void InvalidateSizeDependentResources();
+
 	private:
 		void CreateDeviceIndependentResources();
 		void CreateDeviceResources();

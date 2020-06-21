@@ -20,5 +20,6 @@ namespace cache {
 		inline bool AreVertexBuffersFulfilled() { return m_sizeIndependentBuffersAreFulfilled && m_sizeDependentBuffersAreFulfilled; }
 		vbo::BaseVertexBuffer* GetVertexBuffer(vbo::ClassId vertexBufferClass);
 		void Clear();
+		void InvalidateSizeDependentVertexBuffers();
 	};
 }

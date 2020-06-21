@@ -9,7 +9,13 @@ bool cache::VertexBufferCache::ContainsAll(std::vector<vbo::ClassId>& vertexBuff
 {
     bool containsAll = true;
     for (auto classId : vertexBufferClasses) {
-        containsAll &= (m_vertexBuffers.count(classId) == 1);
+        bool exists = (m_vertexBuffers.count(classId) == 1);
+        if (exists) {
+            containsAll &= m_vertexBuffers[classId]->IsValid();
+        }
+        else {
+            return false;
+        }
     }
     return containsAll;
 }
@@ -19,11 +25,16 @@ void cache::VertexBufferCache::RequireSizeIndependentVertexBuffers(DX::DeviceRes
     m_sizeIndependentBuffersAreFulfilled = false;
     Concurrency::task<void> awaitAllTask = Concurrency::create_task([]() -> void {});
     for (auto classId : vertexBufferClasses) {
+        vbo::BaseVertexBuffer* vertexBuffer;
         if (m_vertexBuffers.count(classId) == 1) {
-            continue;
+            vertexBuffer = m_vertexBuffers[classId];
+            if (vertexBuffer->IsValid()) {
+                continue;
+            }
+        } else {
+            vertexBuffer = vbo::BaseVertexBuffer::NewFromClassId(classId);
         }
-        vbo::BaseVertexBuffer* vertexBuffer = vbo::BaseVertexBuffer::NewFromClassId(classId);
-        if (vertexBuffer->GetIsSizeDependent()) {
+        if (vertexBuffer->IsSizeDependent()) {
             continue;
         }
         awaitAllTask = awaitAllTask && vertexBuffer->MakeInitTask(resources);
@@ -48,11 +59,15 @@ void cache::VertexBufferCache::RequireSizeDependentVertexBuffers(DX::DeviceResou
     m_sizeDependentBuffersAreFulfilled = false;
     Concurrency::task<void> awaitAllTask = Concurrency::create_task([]() -> void {});
     for (auto classId : vertexBufferClasses) {
+        vbo::BaseVertexBuffer* vertexBuffer;
         if (m_vertexBuffers.count(classId) == 1) {
-            continue;
+            vertexBuffer = m_vertexBuffers[classId];
+            if (vertexBuffer->IsValid()) {
+                continue;
+            }
         }
-        vbo::BaseVertexBuffer* vertexBuffer = vbo::BaseVertexBuffer::NewFromClassId(classId);
-        if (!vertexBuffer->GetIsSizeDependent()) {
+        vertexBuffer = vbo::BaseVertexBuffer::NewFromClassId(classId);
+        if (!vertexBuffer->IsSizeDependent()) {
             continue;
         }
         awaitAllTask = awaitAllTask && vertexBuffer->MakeInitTask(resources);
@@ -83,4 +98,13 @@ void cache::VertexBufferCache::Clear()
         vertexBuffer.second->Reset();
     }
     m_vertexBuffers.clear();
+}
+
+void cache::VertexBufferCache::InvalidateSizeDependentVertexBuffers()
+{
+    for (auto vertexBuffer : m_vertexBuffers) {
+        if (vertexBuffer.second->IsSizeDependent()) {
+            vertexBuffer.second->Reset();
+        }
+    }
 }

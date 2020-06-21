@@ -4,7 +4,7 @@
 #include "Common/DirectXHelper.h"
 #include "Common/DeviceResources.h"
 
-vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0)
+vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0), m_isValid(false)
 {
 }
 
@@ -53,6 +53,7 @@ void vbo::BaseVertexBuffer::Activate(ID3D11DeviceContext3* context)
 
 void vbo::BaseVertexBuffer::Reset()
 {
+	m_isValid = false;
 	m_vertexBuffer.Reset();
 }
 
@@ -60,7 +61,7 @@ vbo::MainScreenBgVertexBuffer::MainScreenBgVertexBuffer()
 {
 }
 
-bool vbo::MainScreenBgVertexBuffer::GetIsSizeDependent()
+bool vbo::MainScreenBgVertexBuffer::IsSizeDependent()
 {
 	return true;
 }
@@ -139,5 +140,7 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 				&m_vertexBuffer
 			)
 		);
+
+		m_isValid = true;
 		});
 }

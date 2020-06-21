@@ -12,7 +12,13 @@ bool cache::TextureCache::ContainsAll(std::vector<texture::ClassId>& textureClas
 {
     bool containsAll = true;
     for (auto classId : textureClasses) {
-        containsAll &= (m_textures.count(classId) == 1);
+        bool exists = (m_textures.count(classId) == 1);
+        if (exists) {
+            containsAll &= m_textures[classId]->IsValid();
+        }
+        else {
+            return false;
+        }
     }
     return containsAll && m_samplerAndBlendStateFulfilled;
 }
@@ -84,11 +90,16 @@ void cache::TextureCache::RequireSizeIndependentTextures(DX::DeviceResources* re
         });
 
     for (auto classId : textureClasses) {
+        texture::BaseTexture* texture;
         if (m_textures.count(classId) == 1) {
-            continue;
+            texture = m_textures[classId];
+            if (texture->IsValid()) {
+                continue;
+            }
+        } else {
+            texture = texture::BaseTexture::NewFromClassId(classId);
         }
-        texture::BaseTexture* texture = texture::BaseTexture::NewFromClassId(classId);
-        if (texture->GetIsSizeDependent()) {
+        if (texture->IsSizeDependent()) {
             continue;
         }
         awaitAllTask = awaitAllTask && texture->MakeInitTask(resources);
@@ -115,11 +126,15 @@ void cache::TextureCache::RequireSizeDependentTextures(DX::DeviceResources* reso
         RequireSamplerAndBlendState(resources);
         });
     for (auto classId : textureClasses) {
+        texture::BaseTexture* texture;
         if (m_textures.count(classId) == 1) {
-            continue;
+            texture = m_textures[classId];
+            if (texture->IsValid()) {
+                continue;
+            }
         }
-        texture::BaseTexture* texture = texture::BaseTexture::NewFromClassId(classId);
-        if (!texture->GetIsSizeDependent()) {
+        texture = texture::BaseTexture::NewFromClassId(classId);
+        if (!texture->IsSizeDependent()) {
             continue;
         }
         awaitAllTask = awaitAllTask && texture->MakeInitTask(resources);
@@ -154,4 +169,13 @@ void cache::TextureCache::Clear()
     m_samplerStatePoint.Reset();
     m_blendState.Reset();
     m_samplerAndBlendStateFulfilled = false;
+}
+
+void cache::TextureCache::InvalidateSizeDependentTextures()
+{
+    for (auto texture : m_textures) {
+        if (texture.second->IsSizeDependent()) {
+            texture.second->Reset();
+        }
+    }
 }

@@ -27,6 +27,8 @@ namespace cache {
 		inline bool AreTexturesFulfilled() { return m_sizeIndependentTexturesAreFulfilled && m_sizeDependentTexturesAreFulfilled; }
 		texture::BaseTexture* GetTexture(texture::ClassId textureClass);
 		void Clear();
+		void InvalidateSizeDependentTextures();
+
 		inline ID3D11SamplerState* const* GetLinearSamplerState() { return m_samplerStateLinear.GetAddressOf(); }
 		inline ID3D11SamplerState* const* GetPointSamplerState() { return m_samplerStatePoint.GetAddressOf(); }
 		inline ID3D11BlendState* GetBlendState() { return m_blendState.Get(); }

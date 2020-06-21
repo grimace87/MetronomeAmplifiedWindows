@@ -19,23 +19,25 @@ namespace texture {
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>  m_textureView;
 
 	protected:
-		BaseTexture();
+		bool m_isValid;
 
+		BaseTexture();
 		Concurrency::task<void> MakeTextureFromFileTask(DX::DeviceResources* resources, std::wstring fileName);
 		void MakeTextureFromMemory(DX::DeviceResources* resources, std::vector<byte>& pixelData, int width, int height);
 
 	public:
 		static BaseTexture* NewFromClassId(ClassId id);
-		virtual bool GetIsSizeDependent() = 0;
+		virtual bool IsSizeDependent() = 0;
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) = 0;
 		void Activate(ID3D11DeviceContext3* context);
 		void Reset();
+		inline bool IsValid() { return m_isValid; }
 	};
 
 	class WoodTexture : public BaseTexture {
 	public:
 		WoodTexture();
-		virtual bool GetIsSizeDependent() override;
+		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
 	};
@@ -43,7 +45,7 @@ namespace texture {
 	class OverlayTexture : public BaseTexture {
 	public:
 		OverlayTexture();
-		virtual bool GetIsSizeDependent() override;
+		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
 	};

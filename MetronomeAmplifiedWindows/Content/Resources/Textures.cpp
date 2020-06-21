@@ -5,7 +5,7 @@
 #include "..\Common\DirectXHelper.h"
 #include "..\Common\WICTextureLoader.h"
 
-texture::BaseTexture::BaseTexture()
+texture::BaseTexture::BaseTexture() : m_isValid(false)
 {
 }
 
@@ -25,6 +25,7 @@ Concurrency::task<void> texture::BaseTexture::MakeTextureFromFileTask(DX::Device
 				&m_textureResource,
 				&m_textureView)
 		);
+		m_isValid = true;
 		});
 }
 
@@ -73,6 +74,7 @@ void texture::BaseTexture::MakeTextureFromMemory(DX::DeviceResources* resources,
 	// Assign output parameters
 	m_textureResource = tex;
 	m_textureView = texView;
+	m_isValid = true;
 }
 
 texture::BaseTexture* texture::BaseTexture::NewFromClassId(texture::ClassId id) {
@@ -93,6 +95,7 @@ void texture::BaseTexture::Activate(ID3D11DeviceContext3* context)
 
 void texture::BaseTexture::Reset()
 {
+	m_isValid = false;
 	m_textureResource.Reset();
 	m_textureView.Reset();
 }
@@ -106,7 +109,7 @@ Concurrency::task<void> texture::WoodTexture::MakeInitTask(DX::DeviceResources* 
 	return MakeTextureFromFileTask(resources, L"Assets\\Textures\\wood_bg_texture.jpg");
 }
 
-bool texture::WoodTexture::GetIsSizeDependent()
+bool texture::WoodTexture::IsSizeDependent()
 {
 	return false;
 }
@@ -115,7 +118,7 @@ texture::OverlayTexture::OverlayTexture() : BaseTexture()
 {
 }
 
-bool texture::OverlayTexture::GetIsSizeDependent()
+bool texture::OverlayTexture::IsSizeDependent()
 {
 	return true;
 }

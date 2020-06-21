@@ -712,3 +712,9 @@ vbo::BaseVertexBuffer* DX::DeviceResources::GetVertexBuffer(vbo::ClassId vertexB
 void DX::DeviceResources::ClearVertexBufferCache() {
 	m_vertexBufferCache.Clear();
 }
+
+void DX::DeviceResources::InvalidateSizeDependentResources()
+{
+	m_textureCache.InvalidateSizeDependentTextures();
+	m_vertexBufferCache.InvalidateSizeDependentVertexBuffers();
+}

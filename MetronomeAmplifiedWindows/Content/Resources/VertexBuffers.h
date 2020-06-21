@@ -16,6 +16,7 @@ namespace vbo {
 
 	class BaseVertexBuffer {
 	protected:
+		bool m_isValid;
 		UINT m_vertexCount;
 		Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
 
@@ -24,17 +25,19 @@ namespace vbo {
 
 	public:
 		static BaseVertexBuffer* NewFromClassId(ClassId id);
-		virtual bool GetIsSizeDependent() = 0;
+		virtual bool IsSizeDependent() = 0;
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) = 0;
 		void Activate(ID3D11DeviceContext3* context);
 		void Reset();
+
+		inline bool IsValid() { return m_isValid; }
 		inline UINT GetVertexCount() { return m_vertexCount; }
 	};
 
 	class MainScreenBgVertexBuffer : public BaseVertexBuffer {
 	public:
 		MainScreenBgVertexBuffer();
-		virtual bool GetIsSizeDependent() override;
+		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
 	};

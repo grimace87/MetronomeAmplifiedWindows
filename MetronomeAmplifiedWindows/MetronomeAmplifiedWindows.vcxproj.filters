@@ -67,6 +67,18 @@
     <ClCompile Include="Content\Resources\Shaders.cpp">
       <Filter>Content\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Resources\Textures.cpp">
+      <Filter>Content\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Resources\VertexBuffers.cpp">
+      <Filter>Content\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\TextureCache.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\VertexBufferCache.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -83,6 +95,18 @@
     </ClInclude>
     <ClInclude Include="Content\Resources\Shaders.h">
       <Filter>Content\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Resources\Textures.h">
+      <Filter>Content\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Resources\VertexBuffers.h">
+      <Filter>Content\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\TextureCache.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\VertexBufferCache.h">
+      <Filter>Content</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

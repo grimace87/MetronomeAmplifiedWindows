@@ -669,14 +669,46 @@ DXGI_MODE_ROTATION DX::DeviceResources::ComputeDisplayRotation()
 	return rotation;
 }
 
-void DX::DeviceResources::RequireShaders(std::vector<shader::ClassId> shaderIds) {
-    m_shaderCache.RequireShaders(m_d3dDevice.Get(), m_d3dContext.Get(), shaderIds);
+void DX::DeviceResources::RequireShaders(std::vector<shader::ClassId> shaderClasses) {
+	m_shaderCache.RequireShaders(m_d3dDevice.Get(), m_d3dContext.Get(), shaderClasses);
 }
 
-shader::BaseShader* DX::DeviceResources::GetShader(shader::ClassId shaderId) {
-	return m_shaderCache.GetShader(shaderId);
+shader::BaseShader* DX::DeviceResources::GetShader(shader::ClassId shaderClass) {
+	return m_shaderCache.GetShader(shaderClass);
 }
 
 void DX::DeviceResources::ClearShaderCache() {
-    m_shaderCache.Clear();
+	m_shaderCache.Clear();
+}
+
+void DX::DeviceResources::RequireSizeIndependentTextures(std::vector<texture::ClassId> textureClasses) {
+	m_textureCache.RequireSizeIndependentTextures(this, textureClasses);
+}
+
+void DX::DeviceResources::RequireSizeDependentTextures(std::vector<texture::ClassId> textureClasses) {
+	m_textureCache.RequireSizeDependentTextures(this, textureClasses);
+}
+
+texture::BaseTexture* DX::DeviceResources::GetTexture(texture::ClassId textureClass) {
+	return m_textureCache.GetTexture(textureClass);
+}
+
+void DX::DeviceResources::ClearTextureCache() {
+	m_textureCache.Clear();
+}
+
+void DX::DeviceResources::RequireSizeIndependentVertexBuffers(std::vector<vbo::ClassId> vertexBufferClasses) {
+	m_vertexBufferCache.RequireSizeIndependentVertexBuffers(this, vertexBufferClasses);
+}
+
+void DX::DeviceResources::RequireSizeDependentVertexBuffers(std::vector<vbo::ClassId> vertexBufferClasses) {
+	m_vertexBufferCache.RequireSizeDependentVertexBuffers(this, vertexBufferClasses);
+}
+
+vbo::BaseVertexBuffer* DX::DeviceResources::GetVertexBuffer(vbo::ClassId vertexBufferClass) {
+	return m_vertexBufferCache.GetVertexBuffer(vertexBufferClass);
+}
+
+void DX::DeviceResources::ClearVertexBufferCache() {
+	m_vertexBufferCache.Clear();
 }

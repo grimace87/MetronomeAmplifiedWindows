@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace MetronomeAmplifiedWindows
+namespace structures
 {
 	// Constant buffer used to send MVP matrices to the vertex shader.
 	struct ModelViewProjectionConstantBuffer

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ShaderCache.h"
 
-cache::ShaderCache::ShaderCache() : m_shaders(), m_shadersAreFulfilled(false)
+cache::ShaderCache::ShaderCache() : m_shaders(), m_shadersAreFulfilled(true)
 {
 }
 
@@ -40,9 +40,9 @@ void cache::ShaderCache::RequireShaders(ID3D11Device3* device, ID3D11DeviceConte
         });
 }
 
-shader::BaseShader* cache::ShaderCache::GetShader(shader::ClassId shaderId)
+shader::BaseShader* cache::ShaderCache::GetShader(shader::ClassId shaderClass)
 {
-    return m_shaders[shaderId];
+    return m_shaders[shaderClass];
 }
 
 void cache::ShaderCache::Clear()

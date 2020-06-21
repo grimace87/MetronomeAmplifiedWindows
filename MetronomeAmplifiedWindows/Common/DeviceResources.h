@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "../Content/ShaderCache.h"
+#include "../Content/TextureCache.h"
+#include "../Content/VertexBufferCache.h"
 
 namespace DX
 {
@@ -51,11 +53,30 @@ namespace DX
 		IWICImagingFactory2*		GetWicImagingFactory() const			{ return m_wicFactory.Get(); }
 		D2D1::Matrix3x2F			GetOrientationTransform2D() const		{ return m_orientationTransform2D; }
 
-		// Cache-related functions
+		// TODO - Make some cache functions private?
+
+		// Manage shader cache
 		void RequireShaders(std::vector<shader::ClassId> shaderIds);
-		shader::BaseShader* GetShader(shader::ClassId shaderId);
+		shader::BaseShader* GetShader(shader::ClassId shaderClass);
 		inline bool AreShadersFulfilled() { return m_shaderCache.AreShadersFulfilled(); }
-        void ClearShaderCache();
+		void ClearShaderCache();
+
+		// Manage texture cache
+		void RequireSizeIndependentTextures(std::vector<texture::ClassId> textureClasses);
+		void RequireSizeDependentTextures(std::vector<texture::ClassId> textureClasses);
+		texture::BaseTexture* GetTexture(texture::ClassId textureClass);
+		inline bool AreTexturesFulfilled() { return m_textureCache.AreTexturesFulfilled(); }
+		void ClearTextureCache();
+		inline ID3D11SamplerState* const* GetLinearSamplerState() { return m_textureCache.GetLinearSamplerState(); }
+		inline ID3D11SamplerState* const* GetPointSamplerState() { return m_textureCache.GetPointSamplerState(); }
+		inline ID3D11BlendState* GetBlendState() { return m_textureCache.GetBlendState(); }
+
+		// Manage vertex buffer cache
+		void RequireSizeIndependentVertexBuffers(std::vector<vbo::ClassId> vertexBufferClasses);
+		void RequireSizeDependentVertexBuffers(std::vector<vbo::ClassId> vertexBufferClasses);
+		vbo::BaseVertexBuffer* GetVertexBuffer(vbo::ClassId vertexBufferClass);
+		inline bool AreVertexBuffersFulfilled() { return m_vertexBufferCache.AreVertexBuffersFulfilled(); }
+		void ClearVertexBufferCache();
 
 	private:
 		void CreateDeviceIndependentResources();
@@ -107,5 +128,7 @@ namespace DX
 
 		// Cached DirectX resources
 		cache::ShaderCache m_shaderCache;
+		cache::TextureCache m_textureCache;
+		cache::VertexBufferCache m_vertexBufferCache;
 	};
 }

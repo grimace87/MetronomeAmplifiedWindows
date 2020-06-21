@@ -22,8 +22,12 @@ set(LIBRARY_SOURCES
         Common/DeviceResources.cpp
         Common/WICTextureLoader.cpp
         Content/Resources/Shaders.cpp
+        Content/Resources/Textures.cpp
+        Content/Resources/VertexBuffers.cpp
         Content/MainSceneRenderer.cpp
         Content/ShaderCache.cpp
+        Content/TextureCache.cpp
+        Content/VertexBufferCache.cpp
         App.cpp
         MetronomeAmplifiedWindowsMain.cpp)
 

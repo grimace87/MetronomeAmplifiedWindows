@@ -50,6 +50,9 @@
     <Filter Include="Content\Resources">
       <UniqueIdentifier>{da4292ae-2828-47a8-8028-2c9ef3b3c945}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Definitions">
+      <UniqueIdentifier>{d87b7c3b-fc5e-49a1-b3e9-1e7949b19705}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -78,6 +81,9 @@
     </ClCompile>
     <ClCompile Include="Content\VertexBufferCache.cpp">
       <Filter>Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Font.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -108,12 +114,18 @@
     <ClInclude Include="Content\VertexBufferCache.h">
       <Filter>Content</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Font.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Textures\wood_bg_texture.jpg">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\Orkney.png">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>
@@ -127,5 +139,16 @@
     <FxCompile Include="Content\AlphaTextureVertexShader.hlsl">
       <Filter>Content</Filter>
     </FxCompile>
+    <FxCompile Include="Content\FontPixelShader.hlsl">
+      <Filter>Content</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\FontVertexShader.hlsl">
+      <Filter>Content</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Definitions\Orkney.fnt">
+      <Filter>Assets\Definitions</Filter>
+    </None>
   </ItemGroup>
 </Project>

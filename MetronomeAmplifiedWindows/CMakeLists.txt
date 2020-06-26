@@ -21,6 +21,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 set(LIBRARY_SOURCES
         Common/DeviceResources.cpp
         Common/WICTextureLoader.cpp
+        Common/Font.cpp
         Content/Resources/Shaders.cpp
         Content/Resources/Textures.cpp
         Content/Resources/VertexBuffers.cpp

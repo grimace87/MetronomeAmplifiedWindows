@@ -83,6 +83,8 @@ texture::BaseTexture* texture::BaseTexture::NewFromClassId(texture::ClassId id) 
 		return new WoodTexture();
 	case ClassId::OVERLAY_TEXTURE:
 		return new OverlayTexture();
+	case ClassId::FONT_TEXTURE:
+		return new FontTexture();
 	default:
 		throw std::exception("Requested texture class does not exist");
 	}
@@ -185,4 +187,18 @@ Concurrency::task<void> texture::OverlayTexture::MakeInitTask(DX::DeviceResource
 		// Create texture resources (kept in base class)
 		MakeTextureFromMemory(resources, textureData, width, height);
 		});
+}
+
+texture::FontTexture::FontTexture() : BaseTexture()
+{
+}
+
+Concurrency::task<void> texture::FontTexture::MakeInitTask(DX::DeviceResources* resources)
+{
+	return MakeTextureFromFileTask(resources, L"Assets\\Textures\\Orkney.png");
+}
+
+bool texture::FontTexture::IsSizeDependent()
+{
+	return false;
 }

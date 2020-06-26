@@ -29,6 +29,7 @@ void MainSceneRenderer::Render()
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
+	// Set main shader
 	auto mainShader = m_deviceResources->GetShader(shader::ClassId::ALPHA_TEXTURE);
 	mainShader->Activate(context);
 
@@ -66,13 +67,33 @@ void MainSceneRenderer::Render()
 		vertexTotal - 6,
 		6
 	);
+
+	// Set font shader
+	shader::FontShader* fontShader = dynamic_cast<shader::FontShader*>(m_deviceResources->GetShader(shader::ClassId::FONT));
+	fontShader->SetPaintColor(0.5f, 0.4f, 0.1f, 0.5f);
+	fontShader->Activate(context);
+
+	// Set the font texture
+	auto fontTexture = m_deviceResources->GetTexture(texture::ClassId::FONT_TEXTURE);
+	fontTexture->Activate(context);
+
+	// Set text VBO
+	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::RANDOM_TEXT);
+	fontVertexBuffer->Activate(context);
+	auto fontVertexCount = fontVertexBuffer->GetVertexCount();
+
+	// Draw the objects.
+	context->Draw(
+		fontVertexCount,
+		0
+	);
 }
 
 void MainSceneRenderer::CreateDeviceDependentResources()
 {
 	// Load shaders and textures if needed
-    m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE });
-	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE });
+    m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT });
+	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE });
 }
 
 // Initializes view parameters when the window size changes.
@@ -83,7 +104,7 @@ void MainSceneRenderer::CreateWindowSizeDependentResources()
 
 	// (Re-)create any size-dependent resources
 	m_deviceResources->RequireSizeDependentTextures({ texture::ClassId::OVERLAY_TEXTURE });
-	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG });
+	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::RANDOM_TEXT });
 }
 
 void MainSceneRenderer::ReleaseDeviceDependentResources()

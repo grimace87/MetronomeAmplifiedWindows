@@ -55,9 +55,20 @@ Concurrency::task<void> shader::BaseShader::MakeCompileTask(ID3D11Device3* devic
         this->CompileVertexShader(device, fileData);
     });
 
-    // After the pixel shader file is loaded, create the shader and constant buffer.
+    // After the pixel shader file is loaded, create the shader and initialise the subclass (e.g. create constant buffer).
     auto createPSTask = loadPSTask.then([this, device](const std::vector<byte>& fileData) -> void {
         this->CompilePixelShader(device, fileData);
+
+		if (HasConstantBuffer()) {
+			CD3D11_BUFFER_DESC constantBufferDesc(GetConstantBufferSize(), D3D11_BIND_CONSTANT_BUFFER);
+			DX::ThrowIfFailed(
+				device->CreateBuffer(
+					&constantBufferDesc,
+					nullptr,
+					&m_constantBuffer
+				)
+			);
+		}
     });
 
 	// Return task waiting on both shaders
@@ -82,6 +93,27 @@ void shader::BaseShader::Activate(ID3D11DeviceContext3* context)
 		nullptr,
 		0
 	);
+
+	// Send the constant buffer to the graphics device.
+	if (HasConstantBuffer()) {
+		context->UpdateSubresource1(
+			m_constantBuffer.Get(),
+			0,
+			NULL,
+			GetConstantBufferData(),
+			0,
+			0,
+			0
+		);
+
+		context->PSSetConstantBuffers1(
+			0,
+			1,
+			m_constantBuffer.GetAddressOf(),
+			nullptr,
+			nullptr
+		);
+	}
 }
 
 void shader::BaseShader::Reset()
@@ -89,6 +121,9 @@ void shader::BaseShader::Reset()
     m_vertexShader.Reset();
     m_inputLayout.Reset();
     m_pixelShader.Reset();
+	if (HasConstantBuffer()) {
+		m_constantBuffer.Reset();
+	}
 }
 
 shader::BaseShader* shader::BaseShader::NewFromClassId(ClassId id)
@@ -96,22 +131,71 @@ shader::BaseShader* shader::BaseShader::NewFromClassId(ClassId id)
 	switch (id) {
 	case ClassId::ALPHA_TEXTURE:
 		return new AlphaTexture();
+	case ClassId::FONT:
+		return new FontShader();
 	default:
 		throw std::exception("Requested shader class does not exist");
 	}
 }
 
-shader::AlphaTexture::AlphaTexture() : BaseShader(L"AlphaTextureVertexShader.cso", L"AlphaTexturePixelShader.cso") {
-
+shader::AlphaTexture::AlphaTexture() : BaseShader(L"AlphaTextureVertexShader.cso", L"AlphaTexturePixelShader.cso")
+{
 }
 
-std::vector<D3D11_INPUT_ELEMENT_DESC> shader::AlphaTexture::makeInputDescription() {
+std::vector<D3D11_INPUT_ELEMENT_DESC> shader::AlphaTexture::makeInputDescription()
+{
 	return {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 }
 
-void shader::AlphaTexture::initialiseSubclass() {
+bool shader::AlphaTexture::HasConstantBuffer()
+{
+	return false;
+}
 
+UINT shader::AlphaTexture::GetConstantBufferSize()
+{
+	return 0;
+}
+
+void* shader::AlphaTexture::GetConstantBufferData()
+{
+	return nullptr;
+}
+
+shader::FontShader::FontShader() : BaseShader(L"FontVertexShader.cso", L"FontPixelShader.cso")
+{
+}
+
+std::vector<D3D11_INPUT_ELEMENT_DESC> shader::FontShader::makeInputDescription()
+{
+	return {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	};
+}
+
+bool shader::FontShader::HasConstantBuffer()
+{
+	return true;
+}
+
+UINT shader::FontShader::GetConstantBufferSize()
+{
+	return sizeof(structures::PaintColorConstantBuffer);
+}
+
+void* shader::FontShader::GetConstantBufferData()
+{
+	return &m_paintColorData;
+}
+
+void shader::FontShader::SetPaintColor(float r, float g, float b, float a)
+{
+	m_paintColorData.color.x = r;
+	m_paintColorData.color.y = g;
+	m_paintColorData.color.z = b;
+	m_paintColorData.color.w = a;
 }

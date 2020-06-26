@@ -10,7 +10,8 @@ namespace texture {
 
 	enum class ClassId {
 		WOOD_TEXTURE,
-		OVERLAY_TEXTURE
+		OVERLAY_TEXTURE,
+		FONT_TEXTURE
 	};
 
 	class BaseTexture {
@@ -45,6 +46,14 @@ namespace texture {
 	class OverlayTexture : public BaseTexture {
 	public:
 		OverlayTexture();
+		virtual bool IsSizeDependent() override;
+	protected:
+		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
+	};
+
+	class FontTexture : public BaseTexture {
+	public:
+		FontTexture();
 		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;

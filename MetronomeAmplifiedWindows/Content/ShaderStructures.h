@@ -10,6 +10,12 @@ namespace structures
 		DirectX::XMFLOAT4X4 projection;
 	};
 
+	// Constant buffer for RGBA paint colour
+	struct PaintColorConstantBuffer
+	{
+		DirectX::XMFLOAT4 color;
+	};
+
 	// Used to send position and color per-vertex data to the vertex shader.
 	struct VertexPositionColor
 	{

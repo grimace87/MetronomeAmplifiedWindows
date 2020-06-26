@@ -3,6 +3,7 @@
 
 #include "Common/DirectXHelper.h"
 #include "Common/DeviceResources.h"
+#include "../../Common/Font.h"
 
 vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0), m_isValid(false)
 {
@@ -30,6 +31,8 @@ vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 	switch (id) {
 	case ClassId::MAIN_SCREEN_BG:
 		return new MainScreenBgVertexBuffer();
+	case ClassId::RANDOM_TEXT:
+		return new RandomTextVertexBuffer();
 	default:
 		throw std::exception("Requested VBO class does not exist");
 	}
@@ -133,6 +136,50 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		vertexBufferData.SysMemPitch = 0;
 		vertexBufferData.SysMemSlicePitch = 0;
 		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(sceneVertices), D3D11_BIND_VERTEX_BUFFER);
+		DX::ThrowIfFailed(
+			resources->GetD3DDevice()->CreateBuffer(
+				&vertexBufferDesc,
+				&vertexBufferData,
+				&m_vertexBuffer
+			)
+		);
+
+		m_isValid = true;
+		});
+}
+
+vbo::RandomTextVertexBuffer::RandomTextVertexBuffer()
+{
+}
+
+bool vbo::RandomTextVertexBuffer::IsSizeDependent()
+{
+	return true;
+}
+
+Concurrency::task<void> vbo::RandomTextVertexBuffer::MakeInitTask(DX::DeviceResources* resources)
+{
+	// Load font contents from file
+	auto loadFontDescriptionFileTask = DX::ReadDataAsync(L"Assets\\Definitions\\Orkney.fnt");
+
+	// Coordinates used in the vertex buffer depend on the window size
+	return loadFontDescriptionFileTask.then([this, resources](const std::vector<byte>& fileData) -> void {
+
+		font::Font orkney = font::Font::MakeFromFileContents(fileData);
+		std::vector<structures::VertexTexCoord> sceneVertices = orkney.GenerateTextVbo(std::string("Hello world!"), -0.8f, 0.2f, 1.6f, 0.4f, 2.0f, 1.0f);
+
+		m_vertexCount = sceneVertices.size();
+
+		D3D11_SUBRESOURCE_DATA vertexBufferData;
+		ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
+		vertexBufferData.pSysMem = sceneVertices.data();
+		vertexBufferData.SysMemPitch = 0;
+		vertexBufferData.SysMemSlicePitch = 0;
+
+		CD3D11_BUFFER_DESC vertexBufferDesc;
+		ZeroMemory(&vertexBufferDesc, sizeof(CD3D11_BUFFER_DESC));
+		vertexBufferDesc.ByteWidth = sceneVertices.size() * sizeof(structures::VertexTexCoord);
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		DX::ThrowIfFailed(
 			resources->GetD3DDevice()->CreateBuffer(
 				&vertexBufferDesc,

@@ -11,7 +11,8 @@ namespace DX {
 namespace vbo {
 
 	enum class ClassId {
-		MAIN_SCREEN_BG
+		MAIN_SCREEN_BG,
+		RANDOM_TEXT
 	};
 
 	class BaseVertexBuffer {
@@ -37,6 +38,14 @@ namespace vbo {
 	class MainScreenBgVertexBuffer : public BaseVertexBuffer {
 	public:
 		MainScreenBgVertexBuffer();
+		virtual bool IsSizeDependent() override;
+	protected:
+		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
+	};
+
+	class RandomTextVertexBuffer : public BaseVertexBuffer {
+	public:
+		RandomTextVertexBuffer();
 		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;

@@ -76,6 +76,7 @@ namespace DX
 		void RequireSizeDependentVertexBuffers(std::vector<vbo::ClassId> vertexBufferClasses);
 		vbo::BaseVertexBuffer* GetVertexBuffer(vbo::ClassId vertexBufferClass);
 		inline bool AreVertexBuffersFulfilled() { return m_vertexBufferCache.AreVertexBuffersFulfilled(); }
+		inline font::Font* GetOrkneyFont() { return m_vertexBufferCache.GetOrkneyFont(); }
 		void ClearVertexBufferCache();
 
 		// Manage resources invalidation

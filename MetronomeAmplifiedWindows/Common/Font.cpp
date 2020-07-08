@@ -19,7 +19,7 @@ font::Font::Font(float baseHeight, float lineHeight, std::vector<Glyph>&& glyphs
 font::Font::Font() :
         m_baseHeight(1.0f), m_lineHeight(1.0f), m_glyphs() { }
 
-font::Font font::Font::MakeFromFileContents(const std::vector<byte>& fileData) {
+font::Font* font::Font::MakeFromFileContents(const std::vector<byte>& fileData) {
     // Create the buffer
     auto glyphSet = std::vector<Glyph>();
     glyphSet.resize(FONT_TEXTURE_GLYPH_COUNT);
@@ -115,7 +115,7 @@ font::Font font::Font::MakeFromFileContents(const std::vector<byte>& fileData) {
     }
 
     // Return set
-    return Font((float)valBase, (float)valLineHeight, std::move(glyphSet));
+    return new Font((float)valBase, (float)valLineHeight, std::move(glyphSet));
 }
 
 std::vector<structures::VertexTexCoord> font::Font::GenerateTextVbo(std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale)

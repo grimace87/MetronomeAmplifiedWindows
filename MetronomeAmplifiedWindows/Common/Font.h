@@ -33,7 +33,7 @@ namespace font {
         std::vector<Glyph> m_glyphs;
 
         Font();
-        static Font MakeFromFileContents(const std::vector<byte>& fileData);
+        static Font* MakeFromFileContents(const std::vector<byte>& fileData);
         std::vector<structures::VertexTexCoord> GenerateTextVbo(std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale);
     };
 }

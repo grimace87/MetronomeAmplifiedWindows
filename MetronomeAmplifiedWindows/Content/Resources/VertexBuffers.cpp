@@ -159,14 +159,14 @@ bool vbo::RandomTextVertexBuffer::IsSizeDependent()
 
 Concurrency::task<void> vbo::RandomTextVertexBuffer::MakeInitTask(DX::DeviceResources* resources)
 {
-	// Load font contents from file
-	auto loadFontDescriptionFileTask = DX::ReadDataAsync(L"Assets\\Definitions\\Orkney.fnt");
-
 	// Coordinates used in the vertex buffer depend on the window size
-	return loadFontDescriptionFileTask.then([this, resources](const std::vector<byte>& fileData) -> void {
+	return Concurrency::create_task([this, resources]() -> void {
 
-		font::Font orkney = font::Font::MakeFromFileContents(fileData);
-		std::vector<structures::VertexTexCoord> sceneVertices = orkney.GenerateTextVbo(std::string("Hello world!"), -0.8f, 0.2f, 1.6f, 0.4f, 2.0f, 1.0f);
+		font::Font* orkney = resources->GetOrkneyFont();
+		if (orkney == nullptr) {
+			return;
+		}
+		std::vector<structures::VertexTexCoord> sceneVertices = orkney->GenerateTextVbo(std::string("Hello world!"), -0.8f, 0.2f, 1.6f, 0.4f, 2.0f, 1.0f);
 
 		m_vertexCount = sceneVertices.size();
 

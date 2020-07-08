@@ -94,6 +94,7 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 	// Load shaders and textures if needed
     m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT });
 	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE });
+	m_deviceResources->RequireSizeIndependentVertexBuffers({});
 }
 
 // Initializes view parameters when the window size changes.

@@ -4,7 +4,10 @@
 #include "../Common/DeviceResources.h"
 #include "../Common/DirectXHelper.h"
 
-cache::TextureCache::TextureCache() : m_textures(), m_sizeIndependentTexturesAreFulfilled(true), m_sizeDependentTexturesAreFulfilled(true), m_samplerAndBlendStateFulfilled(false)
+cache::TextureCache::TextureCache() : m_textures(),
+    m_sizeIndependentTexturesAreFulfilled(true),
+    m_sizeDependentTexturesAreFulfilled(true),
+    m_samplerAndBlendStateFulfilled(false)
 {
 }
 
@@ -168,6 +171,8 @@ void cache::TextureCache::Clear()
     m_samplerStateLinear.Reset();
     m_samplerStatePoint.Reset();
     m_blendState.Reset();
+    m_sizeIndependentTexturesAreFulfilled = false;
+    m_sizeDependentTexturesAreFulfilled = false;
     m_samplerAndBlendStateFulfilled = false;
 }
 

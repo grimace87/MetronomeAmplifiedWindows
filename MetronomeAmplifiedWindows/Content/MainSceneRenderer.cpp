@@ -83,7 +83,7 @@ void MainSceneRenderer::Render()
 
 	// Set font shader
 	shader::FontShader* fontShader = dynamic_cast<shader::FontShader*>(m_deviceResources->GetShader(shader::ClassId::FONT));
-	fontShader->SetPaintColor(0.5f, 0.4f, 0.1f, 0.5f);
+	fontShader->SetPaintColor(0.96f, 0.87f, 0.70f, 1.0f);
 	fontShader->Activate(context);
 
 	// Set the font texture
@@ -91,7 +91,7 @@ void MainSceneRenderer::Render()
 	fontTexture->Activate(context);
 
 	// Set text VBO
-	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::RANDOM_TEXT);
+	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::ICON_LABELS);
 	fontVertexBuffer->Activate(context);
 	auto fontVertexCount = fontVertexBuffer->GetVertexCount();
 
@@ -118,7 +118,7 @@ void MainSceneRenderer::CreateWindowSizeDependentResources()
 
 	// (Re-)create any size-dependent resources
 	m_deviceResources->RequireSizeDependentTextures({ texture::ClassId::OVERLAY_TEXTURE });
-	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::RANDOM_TEXT });
+	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::ICON_LABELS });
 }
 
 void MainSceneRenderer::ReleaseDeviceDependentResources()

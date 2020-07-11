@@ -34,6 +34,6 @@ namespace font {
 
         Font();
         static Font* MakeFromFileContents(const std::vector<byte>& fileData);
-        std::vector<structures::VertexTexCoord> GenerateTextVbo(std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale);
+        void PrintIntoVbo(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale);
     };
 }

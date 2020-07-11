@@ -118,13 +118,14 @@ font::Font* font::Font::MakeFromFileContents(const std::vector<byte>& fileData) 
     return new Font((float)valBase, (float)valLineHeight, std::move(glyphSet));
 }
 
-std::vector<structures::VertexTexCoord> font::Font::GenerateTextVbo(std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale)
+/// <summary>
+/// Generate VBO data to render supplied text, writing into the provided vector of VertexTexCoord structs.
+/// Required space in the vector, starting at the startIndex offset, is 6 VertexTexCoord structs per character.
+/// </summary>
+void font::Font::PrintIntoVbo(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale)
 {
     // Assign buffer, with 6 vertices per character and 5 or 8 floats per vertex
     const size_t floatsPerVertex = 6U;
-    size_t vertexCount = textToRender.length() * floatsPerVertex;
-    std::vector<structures::VertexTexCoord> vertexData;
-    vertexData.resize(vertexCount);
 
     // Find scaling factor
     const float lineHeightUnits = boxHeight / lines;
@@ -168,7 +169,7 @@ std::vector<structures::VertexTexCoord> font::Font::GenerateTextVbo(std::string&
         quad[5].pos = { xMin, yMax, 0.0f };
         quad[5].tex = { sMin, tMin, 0.0f };
 
-        structures::VertexTexCoord* copyDest = vertexData.data() + charsRendered * 6;
+        structures::VertexTexCoord* copyDest = vboData.data() + startIndex + charsRendered * 6;
         memcpy((void*)copyDest, (void*)&quad, 6 * sizeof(structures::VertexTexCoord));
 
         penX += (float)glyph.advanceX * unitsPerPixel;
@@ -179,6 +180,4 @@ std::vector<structures::VertexTexCoord> font::Font::GenerateTextVbo(std::string&
         charsRendered++;
 
     }
-
-    return vertexData;
 }

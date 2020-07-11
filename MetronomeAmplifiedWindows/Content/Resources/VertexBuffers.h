@@ -12,7 +12,7 @@ namespace vbo {
 
 	enum class ClassId {
 		MAIN_SCREEN_BG,
-		RANDOM_TEXT
+		ICON_LABELS
 	};
 
 	class BaseVertexBuffer {
@@ -44,9 +44,9 @@ namespace vbo {
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
 	};
 
-	class RandomTextVertexBuffer : public BaseVertexBuffer {
+	class IconLabelsVertexBuffer : public BaseVertexBuffer {
 	public:
-		RandomTextVertexBuffer();
+		IconLabelsVertexBuffer();
 		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;

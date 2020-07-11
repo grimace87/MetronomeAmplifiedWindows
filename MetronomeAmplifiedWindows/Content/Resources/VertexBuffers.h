@@ -23,6 +23,7 @@ namespace vbo {
 
 		BaseVertexBuffer();
 		void putSquare(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
+		void putSquareCentredInside(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Windows::Foundation::Size size);
 
 	public:
 		static BaseVertexBuffer* NewFromClassId(ClassId id);

@@ -55,7 +55,7 @@ void MainSceneRenderer::Render()
 		0
 	);
 
-	// Set the texture for the remaining vertices
+	// Set the texture for the translucent overlay vertices
 	auto overlayTexture = m_deviceResources->GetTexture(texture::ClassId::OVERLAY_TEXTURE);
 	overlayTexture->Activate(context);
 
@@ -64,8 +64,21 @@ void MainSceneRenderer::Render()
 
 	// Draw the objects.
 	context->Draw(
-		vertexTotal - 6,
+		vertexTotal - 30,
 		6
+	);
+
+	// Set the texture for the UI icon vertices
+	auto iconsTexture = m_deviceResources->GetTexture(texture::ClassId::ICONS_TEXTURE);
+	iconsTexture->Activate(context);
+
+	// Set the sampler state
+	context->PSSetSamplers(0, 1, m_deviceResources->GetLinearSamplerState());
+
+	// Draw the objects.
+	context->Draw(
+		24,
+		vertexTotal - 24
 	);
 
 	// Set font shader
@@ -93,7 +106,7 @@ void MainSceneRenderer::CreateDeviceDependentResources()
 {
 	// Load shaders and textures if needed
     m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT });
-	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE });
+	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE, texture::ClassId::ICONS_TEXTURE });
 	m_deviceResources->RequireSizeIndependentVertexBuffers({});
 }
 

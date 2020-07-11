@@ -85,6 +85,8 @@ texture::BaseTexture* texture::BaseTexture::NewFromClassId(texture::ClassId id) 
 		return new OverlayTexture();
 	case ClassId::FONT_TEXTURE:
 		return new FontTexture();
+	case ClassId::ICONS_TEXTURE:
+		return new IconsTexture();
 	default:
 		throw std::exception("Requested texture class does not exist");
 	}
@@ -199,6 +201,20 @@ Concurrency::task<void> texture::FontTexture::MakeInitTask(DX::DeviceResources* 
 }
 
 bool texture::FontTexture::IsSizeDependent()
+{
+	return false;
+}
+
+texture::IconsTexture::IconsTexture() : BaseTexture()
+{
+}
+
+Concurrency::task<void> texture::IconsTexture::MakeInitTask(DX::DeviceResources* resources)
+{
+	return MakeTextureFromFileTask(resources, L"Assets\\Textures\\icons.png");
+}
+
+bool texture::IconsTexture::IsSizeDependent()
 {
 	return false;
 }

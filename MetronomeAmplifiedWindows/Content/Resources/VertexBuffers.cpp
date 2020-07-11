@@ -26,6 +26,27 @@ void vbo::BaseVertexBuffer::putSquare(structures::VertexTexCoord buffer[], int i
 	std::copy(squareVertices, squareVertices + 6, &buffer[index]);
 }
 
+void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Windows::Foundation::Size size)
+{
+	// Get units to pixels scaling factor, and use those to determine dimensions of requested rect in pixels
+	const float pixelsPerUnitWidth = size.Width / 2.0f;
+	const float pixelsPerUnitHeight = size.Height / 2.0f;
+	const float rectWidthPixels = abs(x2 - x1) * pixelsPerUnitWidth;
+	const float rectHeightPixels = abs(y2 - y1) * pixelsPerUnitHeight;
+
+	// Figure out where the square lies in this rect (squareness is defined within pixel coordinates)
+	if (rectWidthPixels > rectHeightPixels) {
+		const float direction = x1 > x2 ? -1.0f : 1.0f;
+		const float widthMargin = direction * 0.5f * (rectWidthPixels - rectHeightPixels) / pixelsPerUnitWidth;
+		putSquare(buffer, index, x1 + widthMargin, y1, x2 - widthMargin, y2, s1, t1, s2, t2);
+	}
+	else {
+		const float direction = y1 > y2 ? -1.0f : 1.0f;
+		const float heightMargin = direction * 0.5f * (rectHeightPixels - rectWidthPixels) / pixelsPerUnitHeight;
+		putSquare(buffer, index, x1, y1 + heightMargin, x2, y2 - heightMargin, s1, t1, s2, t2);
+	}
+}
+
 vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 {
 	switch (id) {
@@ -99,8 +120,18 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		const float h6 = 0.0f - marginUnitsH;
 		const float h5 = h6 - marginUnitsH;
 
+		const float hIcon1Left = -1.0f;
+		const float hIcon2Left = -0.5f;
+		const float hIcon3Left = 0.0f;
+		const float hIcon4Left = 0.5f;
+		const float hIcon4Right = 1.0f;
+
+		const float hIconBottom = 0.7f;
+		const float hIconLabelBottom = 0.5;
+		const float hIconTop = 1.0f;
+
 		// Load mesh vertices. Each vertex has a position and a texture coordinate, plus a 4-byte padding.
-		structures::VertexTexCoord sceneVertices[114];
+		structures::VertexTexCoord sceneVertices[138];
 
 		putSquare(sceneVertices, 0, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -129,7 +160,12 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		putSquare(sceneVertices, 102, w2, h5, w9, h6, 0.5f, 0.5f, 1.0f, 0.0f);
 		putSquare(sceneVertices, 108, w9, h5, w10, h6, 0.5f, 0.5f, 0.0f, 0.0f);
 
-		m_vertexCount = 114;
+		putSquareCentredInside(sceneVertices, 114, hIcon1Left, hIconBottom, hIcon2Left, hIconTop, 0.0f, 0.5f, 0.25f, 0.0f, size);
+		putSquareCentredInside(sceneVertices, 120, hIcon2Left, hIconBottom, hIcon3Left, hIconTop, 0.25f, 0.5f, 0.5f, 0.0f, size);
+		putSquareCentredInside(sceneVertices, 126, hIcon3Left, hIconBottom, hIcon4Left, hIconTop, 0.5f, 0.5f, 0.75f, 0.0f, size);
+		putSquareCentredInside(sceneVertices, 132, hIcon4Left, hIconBottom, hIcon4Right, hIconTop, 0.75f, 0.5f, 1.0f, 0.0f, size);
+
+		m_vertexCount = 138;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

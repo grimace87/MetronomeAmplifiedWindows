@@ -39,8 +39,7 @@ void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord bu
 		const float direction = x1 > x2 ? -1.0f : 1.0f;
 		const float widthMargin = direction * 0.5f * (rectWidthPixels - rectHeightPixels) / pixelsPerUnitWidth;
 		putSquare(buffer, index, x1 + widthMargin, y1, x2 - widthMargin, y2, s1, t1, s2, t2);
-	}
-	else {
+	} else {
 		const float direction = y1 > y2 ? -1.0f : 1.0f;
 		const float heightMargin = direction * 0.5f * (rectHeightPixels - rectWidthPixels) / pixelsPerUnitHeight;
 		putSquare(buffer, index, x1, y1 + heightMargin, x2, y2 - heightMargin, s1, t1, s2, t2);
@@ -129,9 +128,10 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		const float hIconBottom = 0.7f;
 		const float hIconLabelBottom = 0.5;
 		const float hIconTop = 1.0f;
+		const float hLowerIconsLabelTop = h2 + 0.25f * (h3 - h2);
 
 		// Load mesh vertices. Each vertex has a position and a texture coordinate, plus a 4-byte padding.
-		structures::VertexTexCoord sceneVertices[138];
+		structures::VertexTexCoord sceneVertices[150];
 
 		putSquare(sceneVertices, 0, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
@@ -164,8 +164,10 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		putSquareCentredInside(sceneVertices, 120, hIcon2Left, hIconBottom, hIcon3Left, hIconTop, 0.25f, 0.5f, 0.5f, 0.0f, size);
 		putSquareCentredInside(sceneVertices, 126, hIcon3Left, hIconBottom, hIcon4Left, hIconTop, 0.5f, 0.5f, 0.75f, 0.0f, size);
 		putSquareCentredInside(sceneVertices, 132, hIcon4Left, hIconBottom, hIcon4Right, hIconTop, 0.75f, 0.5f, 1.0f, 0.0f, size);
+		putSquareCentredInside(sceneVertices, 138, w2, hLowerIconsLabelTop, w3, h3, 0.0f, 1.0f, 0.25f, 0.5f, size);
+		putSquareCentredInside(sceneVertices, 144, w8, hLowerIconsLabelTop, w9, h3, 0.25f, 1.0f, 0.5f, 0.5f, size);
 
-		m_vertexCount = 138;
+		m_vertexCount = 150;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

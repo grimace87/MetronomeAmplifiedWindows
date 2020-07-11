@@ -64,7 +64,7 @@ void MainSceneRenderer::Render()
 
 	// Draw the objects.
 	context->Draw(
-		vertexTotal - 30,
+		vertexTotal - 42,
 		6
 	);
 
@@ -77,8 +77,8 @@ void MainSceneRenderer::Render()
 
 	// Draw the objects.
 	context->Draw(
-		24,
-		vertexTotal - 24
+		36,
+		vertexTotal - 36
 	);
 
 	// Set font shader

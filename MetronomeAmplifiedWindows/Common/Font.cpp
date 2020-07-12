@@ -122,29 +122,44 @@ font::Font* font::Font::MakeFromFileContents(const std::vector<byte>& fileData) 
 /// Generate VBO data to render supplied text, writing into the provided vector of VertexTexCoord structs.
 /// Required space in the vector, starting at the startIndex offset, is 6 VertexTexCoord structs per character.
 /// </summary>
-void font::Font::PrintIntoVbo(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float lines, float scale)
+void font::Font::PrintTextIntoVboCentredInside(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float maxHeightPixels, Windows::Foundation::Size size)
 {
     // Assign buffer, with 6 vertices per character and 5 or 8 floats per vertex
     const size_t floatsPerVertex = 6U;
 
-    // Find scaling factor
-    const float lineHeightUnits = boxHeight / lines;
-    const float unitsPerPixel = scale * lineHeightUnits / m_lineHeight;
+    // Find scaling factors
+    const float pixelsPerUnitWidth = size.Width / 2.0f;
+    const float pixelsPerUnitHeight = size.Height / 2.0f;
+
+    // Convert target area to pixel sizes and coordinates
+    const float targetWidthPixels = pixelsPerUnitWidth * boxWidth;
+    const float targetHeightPixels = pixelsPerUnitHeight * boxHeight;
+    const float renderHeightPixels = min(targetHeightPixels, maxHeightPixels);
+    const float screenPixelsPerFontPixel = renderHeightPixels / m_lineHeight;
+    float renderWidthPixels = 0.0f;
+    for (char c : textToRender) {
+        Glyph& glyph = m_glyphs.at(c);
+        renderWidthPixels += glyph.advanceX * screenPixelsPerFontPixel;
+    }
+    const float marginXPixels = 0.5f * (targetWidthPixels - renderWidthPixels);
+    const float marginYPixels = 0.5f * (targetHeightPixels - renderHeightPixels);
 
     // Start building the buffer
     int charsRendered = 0;
-    float penX = left;
-    float penY = top - (float)m_baseHeight * unitsPerPixel;
+    const float widthUnitsPerFontPixel = screenPixelsPerFontPixel / pixelsPerUnitWidth;
+    const float heightUnitsPerFontPixel = screenPixelsPerFontPixel / pixelsPerUnitHeight;
+    float penX = left + marginXPixels / pixelsPerUnitWidth;
+    const float penY = top - boxHeight + marginYPixels / pixelsPerUnitHeight;
     float xMin, xMax, yMin, yMax;
     float sMin, sMax, tMin, tMax;
     structures::VertexTexCoord quad[6];
     for (char c : textToRender) {
         Glyph& glyph = m_glyphs.at(c);
 
-        xMin = penX + (float)glyph.offsetX * unitsPerPixel;
-        xMax = xMin + (float)glyph.width * unitsPerPixel;
-        yMax = penY + (float)(m_baseHeight - glyph.offsetY) * unitsPerPixel;
-        yMin = yMax - (float)glyph.height * unitsPerPixel;
+        xMin = penX + (float)glyph.offsetX * widthUnitsPerFontPixel;
+        xMax = xMin + (float)glyph.width * widthUnitsPerFontPixel;
+        yMax = penY + (float)(m_baseHeight - glyph.offsetY) * heightUnitsPerFontPixel;
+        yMin = yMax - (float)glyph.height * heightUnitsPerFontPixel;
 
         sMin = glyph.textureS / FONT_TEXTURE_SIZE;
         sMax = sMin + glyph.width / FONT_TEXTURE_SIZE;
@@ -172,11 +187,7 @@ void font::Font::PrintIntoVbo(std::vector<structures::VertexTexCoord>& vboData, 
         structures::VertexTexCoord* copyDest = vboData.data() + startIndex + charsRendered * 6;
         memcpy((void*)copyDest, (void*)&quad, 6 * sizeof(structures::VertexTexCoord));
 
-        penX += (float)glyph.advanceX * unitsPerPixel;
-        if ((penX + (float)m_lineHeight * unitsPerPixel) > boxWidth) {
-            penX = left;
-            penY -= (float)m_lineHeight * unitsPerPixel;
-        }
+        penX += (float)glyph.advanceX * widthUnitsPerFontPixel;
         charsRendered++;
 
     }

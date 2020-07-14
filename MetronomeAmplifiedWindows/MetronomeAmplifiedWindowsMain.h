@@ -17,6 +17,7 @@ namespace MetronomeAmplifiedWindows
 		void CreateWindowSizeDependentResources();
 		void Update();
 		bool Render();
+		void OnPointerPressed(float normalisedX, float normalisedY);
 
 		// IDeviceNotify
 		virtual void OnDeviceLost();

@@ -76,6 +76,11 @@ bool MetronomeAmplifiedWindowsMain::Render()
 	return true;
 }
 
+void MetronomeAmplifiedWindowsMain::OnPointerPressed(float normalisedX, float normalisedY)
+{
+
+}
+
 // Notifies renderers that device resources need to be released.
 void MetronomeAmplifiedWindowsMain::OnDeviceLost()
 {

@@ -2,9 +2,7 @@
 
 #include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
-//#include "Content\Sample3DSceneRenderer.h"
-//#include "Content\SampleFpsTextRenderer.h"
-#include "Content\MainSceneRenderer.h"
+#include "Content\Scenes\MainSceneRenderer.h"
 
 // Renders Direct2D and 3D content on the screen.
 namespace MetronomeAmplifiedWindows
@@ -14,6 +12,7 @@ namespace MetronomeAmplifiedWindows
 	public:
 		MetronomeAmplifiedWindowsMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		~MetronomeAmplifiedWindowsMain();
+		void CreateDeviceDependentResources();
 		void CreateWindowSizeDependentResources();
 		void Update();
 		bool Render();
@@ -28,9 +27,8 @@ namespace MetronomeAmplifiedWindows
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
 		// TODO: Replace with your own content renderers.
-		// std::unique_ptr<Sample3DSceneRenderer> m_sceneRenderer;
-		// std::unique_ptr<SampleFpsTextRenderer> m_fpsTextRenderer;
 		std::unique_ptr<MainSceneRenderer> m_mainScene;
+		inline Scene* GetTopScene() { return m_mainScene.get(); }
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;

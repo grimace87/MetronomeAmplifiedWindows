@@ -31,12 +31,6 @@ MetronomeAmplifiedWindowsMain::~MetronomeAmplifiedWindowsMain()
 	m_deviceResources->RegisterDeviceNotify(nullptr);
 }
 
-// Updates application state when the window size changes (e.g. device orientation change)
-void MetronomeAmplifiedWindowsMain::CreateWindowSizeDependentResources() 
-{
-	m_mainScene->CreateWindowSizeDependentResources();
-}
-
 // Updates the application state once per frame.
 void MetronomeAmplifiedWindowsMain::Update() 
 {
@@ -84,12 +78,37 @@ void MetronomeAmplifiedWindowsMain::OnPointerPressed(float normalisedX, float no
 // Notifies renderers that device resources need to be released.
 void MetronomeAmplifiedWindowsMain::OnDeviceLost()
 {
-	m_mainScene->ReleaseDeviceDependentResources();
+	m_deviceResources->ClearShaderCache();
+	m_deviceResources->ClearTextureCache();
+	m_deviceResources->ClearVertexBufferCache();
 }
 
 // Notifies renderers that device resources may now be recreated.
 void MetronomeAmplifiedWindowsMain::OnDeviceRestored()
 {
-	m_mainScene->CreateDeviceDependentResources();
+	CreateDeviceDependentResources();
 	CreateWindowSizeDependentResources();
+}
+
+void MetronomeAmplifiedWindowsMain::CreateDeviceDependentResources()
+{
+	Scene* topScene = GetTopScene();
+
+	// Load shaders and textures if needed
+	m_deviceResources->RequireShaders(topScene->GetRequiredShaders());
+	m_deviceResources->RequireSizeIndependentTextures(topScene->GetRequiredSizeIndependentTextures());
+	m_deviceResources->RequireSizeIndependentVertexBuffers(topScene->GetRequiredSizeIndependentVertexBuffers());
+}
+
+// Updates application state when the window size changes (e.g. device orientation change)
+void MetronomeAmplifiedWindowsMain::CreateWindowSizeDependentResources()
+{
+	Scene* topScene = GetTopScene();
+
+	// Invalidate size-dependent resources
+	m_deviceResources->InvalidateSizeDependentResources();
+
+	// (Re-)create any size-dependent resources
+	m_deviceResources->RequireSizeDependentTextures(topScene->GetRequiredSizeDependentTextures());
+	m_deviceResources->RequireSizeDependentVertexBuffers(topScene->GetRequiredSizeDependentVertexBuffers());
 }

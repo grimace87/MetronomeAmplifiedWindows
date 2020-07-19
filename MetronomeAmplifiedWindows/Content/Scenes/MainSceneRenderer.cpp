@@ -9,8 +9,31 @@ using namespace MetronomeAmplifiedWindows;
 MainSceneRenderer::MainSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources)
 {
-	CreateDeviceDependentResources();
-	CreateWindowSizeDependentResources();
+}
+
+std::vector<shader::ClassId> MainSceneRenderer::GetRequiredShaders()
+{
+	return { shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT };
+}
+
+std::vector<texture::ClassId> MainSceneRenderer::GetRequiredSizeIndependentTextures()
+{
+	return { texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE, texture::ClassId::ICONS_TEXTURE };
+}
+
+std::vector<texture::ClassId> MainSceneRenderer::GetRequiredSizeDependentTextures()
+{
+	return { texture::ClassId::OVERLAY_TEXTURE };
+}
+
+std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeIndependentVertexBuffers()
+{
+	return {};
+}
+
+std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeDependentVertexBuffers()
+{
+	return { vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::ICON_LABELS };
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
@@ -100,32 +123,4 @@ void MainSceneRenderer::Render()
 		fontVertexCount,
 		0
 	);
-}
-
-void MainSceneRenderer::CreateDeviceDependentResources()
-{
-	// Load shaders and textures if needed
-    m_deviceResources->RequireShaders({ shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT });
-	m_deviceResources->RequireSizeIndependentTextures({ texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE, texture::ClassId::ICONS_TEXTURE });
-	m_deviceResources->RequireSizeIndependentVertexBuffers({});
-}
-
-// Initializes view parameters when the window size changes.
-void MainSceneRenderer::CreateWindowSizeDependentResources()
-{
-	// Invalidate size-dependent resources
-	m_deviceResources->InvalidateSizeDependentResources();
-
-	// (Re-)create any size-dependent resources
-	m_deviceResources->RequireSizeDependentTextures({ texture::ClassId::OVERLAY_TEXTURE });
-	m_deviceResources->RequireSizeDependentVertexBuffers({ vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::ICON_LABELS });
-}
-
-void MainSceneRenderer::ReleaseDeviceDependentResources()
-{
-    // TODO - Verify cache is not being totally emptied merely from a change of scenes
-
-	m_deviceResources->ClearShaderCache();
-	m_deviceResources->ClearTextureCache();
-	m_deviceResources->ClearVertexBufferCache();
 }

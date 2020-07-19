@@ -89,6 +89,8 @@ void App::Load(Platform::String^ entryPoint)
 	if (m_main == nullptr)
 	{
 		m_main = std::unique_ptr<MetronomeAmplifiedWindowsMain>(new MetronomeAmplifiedWindowsMain(m_deviceResources));
+		m_main->CreateDeviceDependentResources();
+		m_main->CreateWindowSizeDependentResources();
 	}
 }
 

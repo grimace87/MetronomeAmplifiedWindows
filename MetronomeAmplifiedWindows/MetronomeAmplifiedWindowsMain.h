@@ -2,7 +2,7 @@
 
 #include "Common\StepTimer.h"
 #include "Common\DeviceResources.h"
-#include "Content\Scenes\MainSceneRenderer.h"
+#include "Content\Traits.h"
 
 // Renders Direct2D and 3D content on the screen.
 namespace MetronomeAmplifiedWindows
@@ -26,9 +26,9 @@ namespace MetronomeAmplifiedWindows
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
 
-		// TODO: Replace with your own content renderers.
-		std::unique_ptr<MainSceneRenderer> m_mainScene;
-		inline Scene* GetTopScene() { return m_mainScene.get(); }
+		// Stack of renderable scenes
+		std::stack<Scene*> m_sceneStack;
+		Scene* GetTopScene();
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;

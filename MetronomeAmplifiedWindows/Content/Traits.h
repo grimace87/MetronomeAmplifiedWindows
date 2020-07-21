@@ -7,6 +7,7 @@
 class Renderable {
 public:
 	virtual void Render() = 0;
+	virtual void Update(DX::StepTimer const& timer) = 0;
 };
 
 class UsesCachedResources {

@@ -14,4 +14,5 @@
 #include <agile.h>
 #include <concrt.h>
 #include <vector>
+#include <stack>
 #include <ppltasks.h>

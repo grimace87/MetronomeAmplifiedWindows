@@ -271,13 +271,13 @@
     <ClInclude Include="Content\Scenes\MainSceneRenderer.h" />
     <ClInclude Include="Content\ShaderCache.h" />
     <ClInclude Include="Content\TextureCache.h" />
+    <ClInclude Include="Content\Traits.h" />
     <ClInclude Include="Content\VertexBufferCache.h" />
     <ClInclude Include="MetronomeAmplifiedWindowsMain.h" />
     <ClInclude Include="Common\DirectXHelper.h" />
     <ClInclude Include="Common\StepTimer.h" />
     <ClInclude Include="Content\ShaderStructures.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Traits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />

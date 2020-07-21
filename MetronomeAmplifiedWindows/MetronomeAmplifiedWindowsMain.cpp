@@ -2,6 +2,8 @@
 #include "MetronomeAmplifiedWindowsMain.h"
 #include "Common\DirectXHelper.h"
 
+#include "Content/Scenes/MainSceneRenderer.h"
+
 using namespace MetronomeAmplifiedWindows;
 using namespace Windows::Foundation;
 using namespace Windows::System::Threading;
@@ -15,7 +17,8 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	// Content initialisation
-	m_mainScene = std::make_unique<MainSceneRenderer>(m_deviceResources);
+	Scene* firstScene = new MainSceneRenderer(m_deviceResources);
+	m_sceneStack.push(firstScene);
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
 	// e.g. for 60 FPS fixed timestep update logic, call:
@@ -37,7 +40,10 @@ void MetronomeAmplifiedWindowsMain::Update()
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
-		m_mainScene->Update(m_timer);
+		Scene* topScene = GetTopScene();
+		if (topScene != nullptr) {
+			topScene->Update(m_timer);
+		}
 	});
 }
 
@@ -65,7 +71,10 @@ bool MetronomeAmplifiedWindowsMain::Render()
 	context->ClearRenderTargetView(m_deviceResources->GetBackBufferRenderTargetView(), DirectX::Colors::Black);
 
 	// Render the scene objects.
-	m_mainScene->Render();
+	Scene* topScene = GetTopScene();
+	if (topScene != nullptr) {
+		topScene->Render();
+	}
 
 	return true;
 }
@@ -95,9 +104,11 @@ void MetronomeAmplifiedWindowsMain::CreateDeviceDependentResources()
 	Scene* topScene = GetTopScene();
 
 	// Load shaders and textures if needed
-	m_deviceResources->RequireShaders(topScene->GetRequiredShaders());
-	m_deviceResources->RequireSizeIndependentTextures(topScene->GetRequiredSizeIndependentTextures());
-	m_deviceResources->RequireSizeIndependentVertexBuffers(topScene->GetRequiredSizeIndependentVertexBuffers());
+	if (topScene != nullptr) {
+		m_deviceResources->RequireShaders(topScene->GetRequiredShaders());
+		m_deviceResources->RequireSizeIndependentTextures(topScene->GetRequiredSizeIndependentTextures());
+		m_deviceResources->RequireSizeIndependentVertexBuffers(topScene->GetRequiredSizeIndependentVertexBuffers());
+	}
 }
 
 // Updates application state when the window size changes (e.g. device orientation change)
@@ -105,10 +116,18 @@ void MetronomeAmplifiedWindowsMain::CreateWindowSizeDependentResources()
 {
 	Scene* topScene = GetTopScene();
 
-	// Invalidate size-dependent resources
-	m_deviceResources->InvalidateSizeDependentResources();
+	// Invalidate size-dependent resources, then re-create any that are needed now
+	if (topScene != nullptr) {
+		m_deviceResources->InvalidateSizeDependentResources();
+		m_deviceResources->RequireSizeDependentTextures(topScene->GetRequiredSizeDependentTextures());
+		m_deviceResources->RequireSizeDependentVertexBuffers(topScene->GetRequiredSizeDependentVertexBuffers());
+	}
+}
 
-	// (Re-)create any size-dependent resources
-	m_deviceResources->RequireSizeDependentTextures(topScene->GetRequiredSizeDependentTextures());
-	m_deviceResources->RequireSizeDependentVertexBuffers(topScene->GetRequiredSizeDependentVertexBuffers());
+Scene* MetronomeAmplifiedWindowsMain::GetTopScene()
+{
+	if (m_sceneStack.empty()) {
+		return nullptr;
+	}
+	return m_sceneStack.top();
 }

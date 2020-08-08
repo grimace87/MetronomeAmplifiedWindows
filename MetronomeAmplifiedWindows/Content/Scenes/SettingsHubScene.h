@@ -23,6 +23,9 @@ namespace MetronomeAmplifiedWindows
 		virtual std::vector<vbo::ClassId> GetRequiredSizeIndependentVertexBuffers() override;
 		virtual std::vector<vbo::ClassId> GetRequiredSizeDependentVertexBuffers() override;
 
+		// Scene
+		virtual void OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY) override;
+
 	private:
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;

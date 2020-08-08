@@ -2,8 +2,7 @@
 #include "MetronomeAmplifiedWindowsMain.h"
 #include "Common\DirectXHelper.h"
 
-//#include "Content/Scenes/MainSceneRenderer.h"
-#include "Content/Scenes/SettingsHubScene.h"
+#include "Content/Scenes/MainSceneRenderer.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -15,7 +14,7 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	// Content initialisation
-	Scene* firstScene = new SettingsHubScene(m_deviceResources);
+	Scene* firstScene = new MainSceneRenderer(m_deviceResources);
 	m_sceneStack.push(firstScene);
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
@@ -79,7 +78,10 @@ bool MetronomeAmplifiedWindowsMain::Render()
 
 void MetronomeAmplifiedWindowsMain::OnPointerPressed(float normalisedX, float normalisedY)
 {
-
+	Scene* topScene = GetTopScene();
+	if (topScene != nullptr) {
+		topScene->OnPointerPressed(this, normalisedX, normalisedY);
+	}
 }
 
 // Notifies renderers that device resources need to be released.
@@ -128,4 +130,18 @@ Scene* MetronomeAmplifiedWindowsMain::GetTopScene()
 		return nullptr;
 	}
 	return m_sceneStack.top();
+}
+
+void MetronomeAmplifiedWindowsMain::pushScene(Scene* newScene)
+{
+	m_sceneStack.push(newScene);
+	CreateDeviceDependentResources();
+	CreateWindowSizeDependentResources();
+}
+
+void MetronomeAmplifiedWindowsMain::popScene()
+{
+	if (!m_sceneStack.empty()) {
+		m_sceneStack.pop();
+	}
 }

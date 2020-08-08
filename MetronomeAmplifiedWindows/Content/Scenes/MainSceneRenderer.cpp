@@ -2,6 +2,7 @@
 #include "MainSceneRenderer.h"
 
 #include "..\Common\DirectXHelper.h"
+#include "SettingsHubScene.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -122,4 +123,9 @@ void MainSceneRenderer::Render()
 		fontVertexCount,
 		0
 	);
+}
+
+void MainSceneRenderer::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
+{
+	stackHost->pushScene(new SettingsHubScene(m_deviceResources));
 }

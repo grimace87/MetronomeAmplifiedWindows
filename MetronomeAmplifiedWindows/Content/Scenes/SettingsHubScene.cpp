@@ -105,3 +105,7 @@ void SettingsHubScene::Render()
 		78
 	);
 }
+
+void SettingsHubScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
+{
+}

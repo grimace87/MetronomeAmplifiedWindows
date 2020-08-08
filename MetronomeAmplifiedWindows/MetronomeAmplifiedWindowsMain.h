@@ -7,7 +7,7 @@
 // Renders Direct2D and 3D content on the screen.
 namespace MetronomeAmplifiedWindows
 {
-	class MetronomeAmplifiedWindowsMain : public DX::IDeviceNotify
+	class MetronomeAmplifiedWindowsMain : public DX::IDeviceNotify, public StackHost
 	{
 	public:
 		MetronomeAmplifiedWindowsMain(const std::shared_ptr<DX::DeviceResources>& deviceResources);
@@ -21,6 +21,10 @@ namespace MetronomeAmplifiedWindows
 		// IDeviceNotify
 		virtual void OnDeviceLost();
 		virtual void OnDeviceRestored();
+
+		// StackHost
+		virtual void pushScene(Scene* newScene) override;
+		virtual void popScene() override;
 
 	private:
 		// Cached pointer to device resources.

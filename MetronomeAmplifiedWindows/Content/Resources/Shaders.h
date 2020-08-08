@@ -13,10 +13,10 @@ namespace shader {
 
 	class BaseShader {
 	private:
-        Microsoft::WRL::ComPtr<ID3D11VertexShader>   m_vertexShader;
-        Microsoft::WRL::ComPtr<ID3D11PixelShader>    m_pixelShader;
-        Microsoft::WRL::ComPtr<ID3D11InputLayout>	 m_inputLayout;
-		Microsoft::WRL::ComPtr<ID3D11Buffer>		 m_constantBuffer;
+        winrt::com_ptr<ID3D11VertexShader>   m_vertexShader;
+		winrt::com_ptr<ID3D11PixelShader>    m_pixelShader;
+		winrt::com_ptr<ID3D11InputLayout>	 m_inputLayout;
+		winrt::com_ptr<ID3D11Buffer>		 m_constantBuffer;
 
         void CompileVertexShader(ID3D11Device3* device, const std::vector<byte>& fileData);
         void CompilePixelShader(ID3D11Device3* device, const std::vector<byte>& fileData);
@@ -42,10 +42,10 @@ namespace shader {
 	public:
 		AlphaTexture();
 	protected:
-		virtual std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
-		virtual bool HasConstantBuffer() override;
-		virtual UINT GetConstantBufferSize() override;
-		virtual void* GetConstantBufferData() override;
+		std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
+		bool HasConstantBuffer() override;
+		UINT GetConstantBufferSize() override;
+		void* GetConstantBufferData() override;
 	};
 
 	class FontShader : public BaseShader {
@@ -53,10 +53,10 @@ namespace shader {
 		FontShader();
 		void SetPaintColor(float r, float g, float b, float a);
 	protected:
-		virtual std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
-		virtual bool HasConstantBuffer() override;
-		virtual UINT GetConstantBufferSize() override;
-		virtual void* GetConstantBufferData() override;
+		std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
+		bool HasConstantBuffer() override;
+		UINT GetConstantBufferSize() override;
+		void* GetConstantBufferData() override;
 	private:
 		structures::PaintColorConstantBuffer m_paintColorData;
 	};

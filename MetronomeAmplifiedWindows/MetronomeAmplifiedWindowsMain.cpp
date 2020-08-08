@@ -5,9 +5,6 @@
 #include "Content/Scenes/MainSceneRenderer.h"
 
 using namespace MetronomeAmplifiedWindows;
-using namespace Windows::Foundation;
-using namespace Windows::System::Threading;
-using namespace Concurrency;
 
 // Loads and initializes application assets when the application is loaded.
 MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
@@ -49,10 +46,10 @@ void MetronomeAmplifiedWindowsMain::Update()
 
 // Renders the current frame according to the current application state.
 // Returns true if the frame was rendered and is ready to be displayed.
-bool MetronomeAmplifiedWindowsMain::Render() 
+bool MetronomeAmplifiedWindowsMain::Render()
 {
 	// Don't try to render anything before the first Update.
-	if (m_timer.GetFrameCount() == 0)
+	if (m_timer.GetFrameCount() == 0 || !m_deviceResources->AreShadersFulfilled() || !m_deviceResources->AreTexturesFulfilled() || !m_deviceResources->AreVertexBuffersFulfilled())
 	{
 		return false;
 	}

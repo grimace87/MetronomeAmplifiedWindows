@@ -3,6 +3,8 @@
 /.idea/
 x64/
 x86/
+ARM/
 Generated Files/
 cmake-build-debug/
 out/
+/packages/

@@ -13,9 +13,9 @@ namespace cache {
 		bool m_sizeDependentTexturesAreFulfilled;
 		bool m_samplerAndBlendStateFulfilled;
 
-		Microsoft::WRL::ComPtr<ID3D11SamplerState>        m_samplerStateLinear;
-		Microsoft::WRL::ComPtr<ID3D11SamplerState>        m_samplerStatePoint;
-		Microsoft::WRL::ComPtr<ID3D11BlendState>          m_blendState;
+		winrt::com_ptr<ID3D11SamplerState>        m_samplerStateLinear;
+		winrt::com_ptr<ID3D11SamplerState>        m_samplerStatePoint;
+		winrt::com_ptr<ID3D11BlendState>          m_blendState;
 
 		void RequireSamplerAndBlendState(DX::DeviceResources* resources);
 
@@ -29,8 +29,8 @@ namespace cache {
 		void Clear();
 		void InvalidateSizeDependentTextures();
 
-		inline ID3D11SamplerState* const* GetLinearSamplerState() { return m_samplerStateLinear.GetAddressOf(); }
-		inline ID3D11SamplerState* const* GetPointSamplerState() { return m_samplerStatePoint.GetAddressOf(); }
-		inline ID3D11BlendState* GetBlendState() { return m_blendState.Get(); }
+		void ActivateBlendState(ID3D11DeviceContext* context);
+		void ActivateLinearSamplerState(ID3D11DeviceContext* context);
+		void ActivatePointSamplerState(ID3D11DeviceContext* context);
 	};
 }

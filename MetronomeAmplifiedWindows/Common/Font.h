@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Content/ShaderStructures.h"
+#include <winrt/Windows.Foundation.h>
 
 #define FONT_TEXTURE_GLYPH_COUNT 128
 #define FONT_TEXTURE_SIZE 512.0f
@@ -34,6 +35,6 @@ namespace font {
 
         Font();
         static Font* MakeFromFileContents(const std::vector<byte>& fileData);
-        void PrintTextIntoVboCentredInside(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float maxHeightPixels, Windows::Foundation::Size size);
+        void PrintTextIntoVboCentredInside(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float maxHeightPixels, winrt::Windows::Foundation::Size size);
     };
 }

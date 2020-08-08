@@ -17,8 +17,8 @@ namespace texture {
 
 	class BaseTexture {
 	private:
-		Microsoft::WRL::ComPtr<ID3D11Resource>            m_textureResource;
-		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>  m_textureView;
+		winrt::com_ptr<ID3D11Resource>            m_textureResource;
+		winrt::com_ptr<ID3D11ShaderResourceView>  m_textureView;
 
 	protected:
 		bool m_isValid;

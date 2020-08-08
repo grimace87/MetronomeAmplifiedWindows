@@ -47,7 +47,7 @@ void cache::VertexBufferCache::RequireSizeIndependentVertexBuffers(DX::DeviceRes
             t.get();
             m_sizeIndependentBuffersAreFulfilled = true;
         }
-        catch (Platform::COMException^ e) {
+        catch (const std::exception& e) {
             OutputDebugString(L"Failed to create a size-independent VBO");
             throw e;
         }
@@ -76,7 +76,7 @@ void cache::VertexBufferCache::RequireSizeDependentVertexBuffers(DX::DeviceResou
             t.get();
             m_sizeDependentBuffersAreFulfilled = true;
         }
-        catch (Platform::COMException^ e) {
+        catch (const std::exception& e) {
             OutputDebugString(L"Failed to create a size-independent VBO");
             throw e;
         }

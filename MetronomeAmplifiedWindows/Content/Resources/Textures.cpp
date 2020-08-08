@@ -16,14 +16,14 @@ Concurrency::task<void> texture::BaseTexture::MakeTextureFromFileTask(DX::Device
 
 	// After the image file is loaded, decode it and create a texture
 	return loadTextureImageTask.then([this, resources](const std::vector<byte>& fileData) {
-		DX::ThrowIfFailed(
+		winrt::check_hresult(
 			CreateWICTextureFromMemory(
 				resources->GetD3DDevice(),
 				resources->GetD3DDeviceContext(),
 				fileData.data(),
 				fileData.size(),
-				&m_textureResource,
-				&m_textureView)
+				m_textureResource.put(),
+				m_textureView.put())
 		);
 		m_isValid = true;
 		});
@@ -47,12 +47,11 @@ void texture::BaseTexture::MakeTextureFromMemory(DX::DeviceResources* resources,
 	desc.CPUAccessFlags = 0;
 
 	// Create resource
-	ID3D11Texture2D* tex;
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		resources->GetD3DDevice()->CreateTexture2D(
 			&desc,
 			&subData,
-			&tex)
+			(ID3D11Texture2D**)m_textureResource.put())
 	);
 
 	// Describe texture view
@@ -63,17 +62,14 @@ void texture::BaseTexture::MakeTextureFromMemory(DX::DeviceResources* resources,
 	viewDesc.Texture2D.MostDetailedMip = 0;
 
 	// Create texture view
-	ID3D11ShaderResourceView* texView;
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		resources->GetD3DDevice()->CreateShaderResourceView(
-			tex,
+			m_textureResource.get(),
 			&viewDesc,
-			&texView)
+			m_textureView.put())
 	);
 
 	// Assign output parameters
-	m_textureResource = tex;
-	m_textureView = texView;
 	m_isValid = true;
 }
 
@@ -94,14 +90,15 @@ texture::BaseTexture* texture::BaseTexture::NewFromClassId(texture::ClassId id) 
 
 void texture::BaseTexture::Activate(ID3D11DeviceContext3* context)
 {
-	context->PSSetShaderResources(0, 1, m_textureView.GetAddressOf());
+	ID3D11ShaderResourceView* resourceView = m_textureView.get();
+	context->PSSetShaderResources(0, 1, &resourceView);
 }
 
 void texture::BaseTexture::Reset()
 {
 	m_isValid = false;
-	m_textureResource.Reset();
-	m_textureView.Reset();
+	m_textureResource = nullptr;
+	m_textureView = nullptr;
 }
 
 texture::WoodTexture::WoodTexture() : BaseTexture()

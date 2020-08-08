@@ -57,15 +57,14 @@ void MainSceneRenderer::Render()
 	mainShader->Activate(context);
 
 	// Set the blend state
-	UINT sampleMask = 0xffffffff;
-	context->OMSetBlendState(m_deviceResources->GetBlendState(), NULL, sampleMask);
+	m_deviceResources->ActivateBlendState();
 
 	// Set the texture for the first few vertices
 	auto woodenTexture = m_deviceResources->GetTexture(texture::ClassId::WOOD_TEXTURE);
 	woodenTexture->Activate(context);
 
 	// Set the sampler state
-	context->PSSetSamplers(0, 1, m_deviceResources->GetLinearSamplerState());
+	m_deviceResources->ActivateLinearSamplerState();
 
 	// Get and activate the vertex buffer
 	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_BG);
@@ -83,7 +82,7 @@ void MainSceneRenderer::Render()
 	overlayTexture->Activate(context);
 
 	// Set the sampler state
-	context->PSSetSamplers(0, 1, m_deviceResources->GetPointSamplerState());
+	m_deviceResources->ActivatePointSamplerState();
 
 	// Draw the objects.
 	context->Draw(
@@ -96,7 +95,7 @@ void MainSceneRenderer::Render()
 	iconsTexture->Activate(context);
 
 	// Set the sampler state
-	context->PSSetSamplers(0, 1, m_deviceResources->GetLinearSamplerState());
+	m_deviceResources->ActivateLinearSamplerState();
 
 	// Draw the objects.
 	context->Draw(

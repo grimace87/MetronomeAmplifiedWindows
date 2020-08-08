@@ -12,34 +12,34 @@ void shader::BaseShader::CompileVertexShader(ID3D11Device3* device, const std::v
 	// Construct the input description
 	auto inputDescription = makeInputDescription();
 	
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreateVertexShader(
 			&fileData[0],
 			fileData.size(),
 			nullptr,
-			&m_vertexShader
+			m_vertexShader.put()
 		)
 	);
 
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreateInputLayout(
 			inputDescription.data(),
 			inputDescription.size(),
 			&fileData[0],
 			fileData.size(),
-			&m_inputLayout
+			m_inputLayout.put()
 		)
 	);
 }
 
 void shader::BaseShader::CompilePixelShader(ID3D11Device3* device, const std::vector<byte>& fileData)
 {
-	DX::ThrowIfFailed(
+	winrt::check_hresult(
 		device->CreatePixelShader(
 			&fileData[0],
 			fileData.size(),
 			nullptr,
-			&m_pixelShader
+			m_pixelShader.put()
 		)
 	);
 }
@@ -61,11 +61,11 @@ Concurrency::task<void> shader::BaseShader::MakeCompileTask(ID3D11Device3* devic
 
 		if (HasConstantBuffer()) {
 			CD3D11_BUFFER_DESC constantBufferDesc(GetConstantBufferSize(), D3D11_BIND_CONSTANT_BUFFER);
-			DX::ThrowIfFailed(
+			winrt::check_hresult(
 				device->CreateBuffer(
 					&constantBufferDesc,
 					nullptr,
-					&m_constantBuffer
+					m_constantBuffer.put()
 				)
 			);
 		}
@@ -78,26 +78,28 @@ Concurrency::task<void> shader::BaseShader::MakeCompileTask(ID3D11Device3* devic
 void shader::BaseShader::Activate(ID3D11DeviceContext3* context)
 {
 	// Set the vertex shader input layout
-	context->IASetInputLayout(m_inputLayout.Get());
+	context->IASetInputLayout(m_inputLayout.get());
 
 	// Attach our vertex shader.
 	context->VSSetShader(
-		m_vertexShader.Get(),
+		m_vertexShader.get(),
 		nullptr,
 		0
 	);
 
 	// Attach our pixel shader.
 	context->PSSetShader(
-		m_pixelShader.Get(),
+		m_pixelShader.get(),
 		nullptr,
 		0
 	);
 
 	// Send the constant buffer to the graphics device.
 	if (HasConstantBuffer()) {
+		ID3D11Buffer* constantBuffer = m_constantBuffer.get();
+
 		context->UpdateSubresource1(
-			m_constantBuffer.Get(),
+			constantBuffer,
 			0,
 			NULL,
 			GetConstantBufferData(),
@@ -109,7 +111,7 @@ void shader::BaseShader::Activate(ID3D11DeviceContext3* context)
 		context->PSSetConstantBuffers1(
 			0,
 			1,
-			m_constantBuffer.GetAddressOf(),
+			&constantBuffer,
 			nullptr,
 			nullptr
 		);
@@ -118,11 +120,11 @@ void shader::BaseShader::Activate(ID3D11DeviceContext3* context)
 
 void shader::BaseShader::Reset()
 {
-    m_vertexShader.Reset();
-    m_inputLayout.Reset();
-    m_pixelShader.Reset();
+    m_vertexShader = nullptr;
+    m_inputLayout = nullptr;
+    m_pixelShader = nullptr;
 	if (HasConstantBuffer()) {
-		m_constantBuffer.Reset();
+		m_constantBuffer = nullptr;
 	}
 }
 

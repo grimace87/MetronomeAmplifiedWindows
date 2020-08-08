@@ -44,9 +44,6 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Filter Include="Assets\Textures">
-      <UniqueIdentifier>{5a332e77-8dc3-4826-a800-93eb45003aa9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content\Resources">
       <UniqueIdentifier>{da4292ae-2828-47a8-8028-2c9ef3b3c945}</UniqueIdentifier>
     </Filter>
@@ -58,6 +55,9 @@
     </Filter>
     <Filter Include="Content\Scenes">
       <UniqueIdentifier>{fbf82771-6ec1-4eb5-92d4-392e49f656b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Textures">
+      <UniqueIdentifier>{5a332e77-8dc3-4826-a800-93eb45003aa9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,6 +90,9 @@
     </ClCompile>
     <ClCompile Include="Content\Scenes\MainSceneRenderer.cpp">
       <Filter>Content\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\DirectXHelper.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -145,9 +148,6 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Definitions\Orkney.fnt" />
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="Content\Shaders\AlphaTexturePixelShader.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
@@ -160,5 +160,10 @@
     <FxCompile Include="Content\Shaders\FontVertexShader.hlsl">
       <Filter>Content\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Definitions\Orkney.fnt">
+      <Filter>Assets\Definitions</Filter>
+    </None>
   </ItemGroup>
 </Project>

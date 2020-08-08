@@ -47,18 +47,18 @@ void cache::TextureCache::RequireSamplerAndBlendState(DX::DeviceResources* resou
     samplerDesc.BorderColor[3] = 0;
     samplerDesc.MinLOD = 0;
     samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-    DX::ThrowIfFailed(
+    winrt::check_hresult(
         resources->GetD3DDevice()->CreateSamplerState(
             &samplerDesc,
-            &m_samplerStateLinear)
+            m_samplerStateLinear.put())
     );
 
     // Create the point sampler state, as a slight variation of the previous
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-    DX::ThrowIfFailed(
+    winrt::check_hresult(
         resources->GetD3DDevice()->CreateSamplerState(
             &samplerDesc,
-            &m_samplerStatePoint)
+            m_samplerStatePoint.put())
     );
 
     // Create the blend state
@@ -75,10 +75,10 @@ void cache::TextureCache::RequireSamplerAndBlendState(DX::DeviceResources* resou
     blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
     blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-    DX::ThrowIfFailed(
+    winrt::check_hresult(
         resources->GetD3DDevice()->CreateBlendState(
             &blendDesc,
-            &m_blendState)
+            m_blendState.put())
     );
 
     // Signal job done
@@ -115,7 +115,7 @@ void cache::TextureCache::RequireSizeIndependentTextures(DX::DeviceResources* re
             t.get();
             m_sizeIndependentTexturesAreFulfilled = true;
         }
-        catch (Platform::COMException^ e) {
+        catch (const std::exception& e) {
             OutputDebugString(L"Failed to create a size-independent texture");
             throw e;
         }
@@ -150,7 +150,7 @@ void cache::TextureCache::RequireSizeDependentTextures(DX::DeviceResources* reso
             t.get();
             m_sizeDependentTexturesAreFulfilled = true;
         }
-        catch (Platform::COMException^ e) {
+        catch (const std::exception& e) {
             OutputDebugString(L"Failed to create a size-dependent texture");
             throw e;
         }
@@ -168,9 +168,9 @@ void cache::TextureCache::Clear()
         texture.second->Reset();
     }
     m_textures.clear();
-    m_samplerStateLinear.Reset();
-    m_samplerStatePoint.Reset();
-    m_blendState.Reset();
+    m_samplerStateLinear = nullptr;
+    m_samplerStatePoint = nullptr;
+    m_blendState = nullptr;
     m_sizeIndependentTexturesAreFulfilled = false;
     m_sizeDependentTexturesAreFulfilled = false;
     m_samplerAndBlendStateFulfilled = false;
@@ -183,4 +183,22 @@ void cache::TextureCache::InvalidateSizeDependentTextures()
             texture.second->Reset();
         }
     }
+}
+
+void cache::TextureCache::ActivateBlendState(ID3D11DeviceContext* context)
+{
+    UINT sampleMask = 0xffffffff;
+    context->OMSetBlendState(m_blendState.get(), NULL, sampleMask);
+}
+
+void cache::TextureCache::ActivateLinearSamplerState(ID3D11DeviceContext* context)
+{
+    ID3D11SamplerState* samplerState = m_samplerStateLinear.get();
+    context->PSSetSamplers(0, 1, &samplerState);
+}
+
+void cache::TextureCache::ActivatePointSamplerState(ID3D11DeviceContext* context)
+{
+    ID3D11SamplerState* samplerState = m_samplerStatePoint.get();
+    context->PSSetSamplers(0, 1, &samplerState);
 }

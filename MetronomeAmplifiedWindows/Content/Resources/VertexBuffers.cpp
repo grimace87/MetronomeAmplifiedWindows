@@ -26,7 +26,7 @@ void vbo::BaseVertexBuffer::putSquare(structures::VertexTexCoord buffer[], int i
 	std::copy(squareVertices, squareVertices + 6, &buffer[index]);
 }
 
-void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, Windows::Foundation::Size size)
+void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2, winrt::Windows::Foundation::Size size)
 {
 	// Get units to pixels scaling factor, and use those to determine dimensions of requested rect in pixels
 	const float pixelsPerUnitWidth = size.Width / 2.0f;
@@ -63,10 +63,11 @@ void vbo::BaseVertexBuffer::Activate(ID3D11DeviceContext3* context)
 	// Each vertex is one instance of the VertexPositionColor struct.
 	UINT stride = sizeof(structures::VertexTexCoord);
 	UINT offset = 0;
+	ID3D11Buffer* vertexBuffer = m_vertexBuffer.get();
 	context->IASetVertexBuffers(
 		0,
 		1,
-		m_vertexBuffer.GetAddressOf(),
+		&vertexBuffer,
 		&stride,
 		&offset
 	);
@@ -77,7 +78,7 @@ void vbo::BaseVertexBuffer::Activate(ID3D11DeviceContext3* context)
 void vbo::BaseVertexBuffer::Reset()
 {
 	m_isValid = false;
-	m_vertexBuffer.Reset();
+	m_vertexBuffer = nullptr;
 }
 
 vbo::MainScreenBgVertexBuffer::MainScreenBgVertexBuffer()
@@ -95,7 +96,7 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 	return Concurrency::create_task([this, resources] {
 
 		// Get necessary coordinates to draw the overlay, in normalised coordinates (range of -1 to 1)
-		Windows::Foundation::Size size = resources->GetOutputSize();
+		winrt::Windows::Foundation::Size size = resources->GetOutputSize();
 		const float marginLogicalInches = 0.25f;
 		const float dpi = resources->GetDpi();
 		const float marginUnitsW = 2.0f * (marginLogicalInches * dpi) / size.Width;
@@ -174,11 +175,11 @@ Concurrency::task<void> vbo::MainScreenBgVertexBuffer::MakeInitTask(DX::DeviceRe
 		vertexBufferData.SysMemPitch = 0;
 		vertexBufferData.SysMemSlicePitch = 0;
 		CD3D11_BUFFER_DESC vertexBufferDesc(sizeof(sceneVertices), D3D11_BIND_VERTEX_BUFFER);
-		DX::ThrowIfFailed(
+		winrt::check_hresult(
 			resources->GetD3DDevice()->CreateBuffer(
 				&vertexBufferDesc,
 				&vertexBufferData,
-				&m_vertexBuffer
+				m_vertexBuffer.put()
 			)
 		);
 
@@ -206,7 +207,7 @@ Concurrency::task<void> vbo::IconLabelsVertexBuffer::MakeInitTask(DX::DeviceReso
 		}
 
 		// Guidelines from MainScreenBackgroundVertexBuffer
-		Windows::Foundation::Size size = resources->GetOutputSize();
+		winrt::Windows::Foundation::Size size = resources->GetOutputSize();
 		const float marginLogicalInches = 0.25f;
 		const float dpi = resources->GetDpi();
 		const float marginUnitsW = 2.0f * (marginLogicalInches * dpi) / size.Width;
@@ -268,11 +269,11 @@ Concurrency::task<void> vbo::IconLabelsVertexBuffer::MakeInitTask(DX::DeviceReso
 		ZeroMemory(&vertexBufferDesc, sizeof(CD3D11_BUFFER_DESC));
 		vertexBufferDesc.ByteWidth = vboData.size() * sizeof(structures::VertexTexCoord);
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		DX::ThrowIfFailed(
+		winrt::check_hresult(
 			resources->GetD3DDevice()->CreateBuffer(
 				&vertexBufferDesc,
 				&vertexBufferData,
-				&m_vertexBuffer
+				m_vertexBuffer.put()
 			)
 		);
 

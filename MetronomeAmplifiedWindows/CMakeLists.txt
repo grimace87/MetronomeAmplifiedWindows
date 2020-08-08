@@ -10,7 +10,7 @@ cmake_minimum_required (VERSION 3.16)
 
 project (MetronomeAmplifiedWindows LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
@@ -20,12 +20,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin/CMake")
 
 set(LIBRARY_SOURCES
         Common/DeviceResources.cpp
+        Common/DirectXHelper.cpp
         Common/WICTextureLoader.cpp
         Common/Font.cpp
         Content/Resources/Shaders.cpp
         Content/Resources/Textures.cpp
         Content/Resources/VertexBuffers.cpp
-        Content/MainSceneRenderer.cpp
+        Content/Scenes/MainSceneRenderer.cpp
         Content/ShaderCache.cpp
         Content/TextureCache.cpp
         Content/VertexBufferCache.cpp
@@ -36,9 +37,11 @@ set(SHADER_SOURCES
         Content/AlphaTextureVertexShader.hlsl
         Content/AlphaTexturePixelShader.hlsl)
 
+include_directories(.)
+
 add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES})
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE Src/pch.h)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ./pch.h)
 
 # Many of the things below are MSVC-specific or WIN32-specific
 target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)

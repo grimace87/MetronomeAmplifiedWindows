@@ -1,53 +1,34 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "App.h"
 
-#include <ppltasks.h>
-
-using namespace MetronomeAmplifiedWindows;
-
-using namespace concurrency;
-using namespace Windows::ApplicationModel;
-using namespace Windows::ApplicationModel::Core;
-using namespace Windows::ApplicationModel::Activation;
-using namespace Windows::UI::Core;
-using namespace Windows::UI::Input;
-using namespace Windows::System;
-using namespace Windows::Foundation;
-using namespace Windows::Graphics::Display;
-
 // The main function is only used to initialize our IFrameworkView class.
-[Platform::MTAThread]
-int main(Platform::Array<Platform::String^>^)
+int __stdcall wWinMain(HINSTANCE, HINSTANCE, PWSTR, int)
 {
-	auto direct3DApplicationSource = ref new Direct3DApplicationSource();
-	CoreApplication::Run(direct3DApplicationSource);
-	return 0;
+	winrt::init_apartment();
+	winrt::Windows::ApplicationModel::Core::CoreApplication::Run(winrt::make<MetronomeAmplifiedWindows::App>());
 }
 
-IFrameworkView^ Direct3DApplicationSource::CreateView()
+winrt::Windows::ApplicationModel::Core::IFrameworkView MetronomeAmplifiedWindows::App::CreateView()
 {
-	return ref new App();
+	return *this;
 }
 
-App::App() :
+MetronomeAmplifiedWindows::App::App() :
 	m_windowClosed(false),
 	m_windowVisible(true)
 {
 }
 
 // The first method called when the IFrameworkView is being created.
-void App::Initialize(CoreApplicationView^ applicationView)
+void MetronomeAmplifiedWindows::App::Initialize(winrt::Windows::ApplicationModel::Core::CoreApplicationView const& applicationView)
 {
 	// Register event handlers for app lifecycle. This example includes Activated, so that we
 	// can make the CoreWindow active and start rendering on the window.
-	applicationView->Activated +=
-		ref new TypedEventHandler<CoreApplicationView^, IActivatedEventArgs^>(this, &App::OnActivated);
+	applicationView.Activated({ this, &App::OnActivated });
 
-	CoreApplication::Suspending +=
-		ref new EventHandler<SuspendingEventArgs^>(this, &App::OnSuspending);
+	winrt::Windows::ApplicationModel::Core::CoreApplication::Suspending({ this, &App::OnSuspending });
 
-	CoreApplication::Resuming +=
-		ref new EventHandler<Platform::Object^>(this, &App::OnResuming);
+	winrt::Windows::ApplicationModel::Core::CoreApplication::Resuming({ this, &App::OnResuming });
 
 	// At this point we have access to the device. 
 	// We can create the device-dependent resources.
@@ -55,64 +36,43 @@ void App::Initialize(CoreApplicationView^ applicationView)
 }
 
 // Called when the CoreWindow object is created (or re-created).
-void App::SetWindow(CoreWindow^ window)
+void MetronomeAmplifiedWindows::App::SetWindow(winrt::Windows::UI::Core::CoreWindow const& window)
 {
-	window->SizeChanged += 
-		ref new TypedEventHandler<CoreWindow^, WindowSizeChangedEventArgs^>(this, &App::OnWindowSizeChanged);
+	window.SizeChanged({ this, &App::OnWindowSizeChanged });
+	window.VisibilityChanged({ this, &App::OnVisibilityChanged });
+	window.Closed({ this, &App::OnWindowClosed });
+	window.PointerPressed({ this, &App::OnPointerPressed });
 
-	window->VisibilityChanged +=
-		ref new TypedEventHandler<CoreWindow^, VisibilityChangedEventArgs^>(this, &App::OnVisibilityChanged);
-
-	window->Closed += 
-		ref new TypedEventHandler<CoreWindow^, CoreWindowEventArgs^>(this, &App::OnWindowClosed);
-
-	window->PointerPressed +=
-		ref new TypedEventHandler<CoreWindow^, PointerEventArgs^>(this, &App::OnPointerPressed);
-
-	DisplayInformation^ currentDisplayInformation = DisplayInformation::GetForCurrentView();
-
-	currentDisplayInformation->DpiChanged +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDpiChanged);
-
-	currentDisplayInformation->OrientationChanged +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnOrientationChanged);
-
-	DisplayInformation::DisplayContentsInvalidated +=
-		ref new TypedEventHandler<DisplayInformation^, Object^>(this, &App::OnDisplayContentsInvalidated);
+	winrt::Windows::Graphics::Display::DisplayInformation currentDisplayInformation = winrt::Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
+	currentDisplayInformation.DpiChanged({ this, &App::OnDpiChanged });
+	currentDisplayInformation.OrientationChanged({ this, &App::OnOrientationChanged });
+	winrt::Windows::Graphics::Display::DisplayInformation::DisplayContentsInvalidated({ this, &App::OnDisplayContentsInvalidated });
 
 	m_deviceResources->SetWindow(window);
 }
 
 // Initializes scene resources, or loads a previously saved app state.
-void App::Load(Platform::String^ entryPoint)
+void MetronomeAmplifiedWindows::App::Load(winrt::hstring const& entryPoint)
 {
-	if (m_main == nullptr)
-	{
-		m_main = std::unique_ptr<MetronomeAmplifiedWindowsMain>(new MetronomeAmplifiedWindowsMain(m_deviceResources));
+	if (m_main == nullptr) {
+		m_main = std::make_unique<MetronomeAmplifiedWindowsMain>(m_deviceResources);
 		m_main->CreateDeviceDependentResources();
 		m_main->CreateWindowSizeDependentResources();
 	}
 }
 
 // This method is called after the window becomes active.
-void App::Run()
+void MetronomeAmplifiedWindows::App::Run()
 {
-	while (!m_windowClosed)
-	{
-		if (m_windowVisible)
-		{
-			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessAllIfPresent);
-
+	while (!m_windowClosed) {
+		if (m_windowVisible) {
+			winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread().Dispatcher().ProcessEvents(winrt::Windows::UI::Core::CoreProcessEventsOption::ProcessAllIfPresent);
 			m_main->Update();
-
-			if (m_main->Render())
-			{
+			if (m_main->Render()) {
 				m_deviceResources->Present();
 			}
-		}
-		else
-		{
-			CoreWindow::GetForCurrentThread()->Dispatcher->ProcessEvents(CoreProcessEventsOption::ProcessOneAndAllPending);
+		} else {
+			winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread().Dispatcher().ProcessEvents(winrt::Windows::UI::Core::CoreProcessEventsOption::ProcessOneAndAllPending);
 		}
 	}
 }
@@ -120,37 +80,37 @@ void App::Run()
 // Required for IFrameworkView.
 // Terminate events do not cause Uninitialize to be called. It will be called if your IFrameworkView
 // class is torn down while the app is in the foreground.
-void App::Uninitialize()
+void MetronomeAmplifiedWindows::App::Uninitialize()
 {
 }
 
 // Application lifecycle event handlers.
 
-void App::OnActivated(CoreApplicationView^ applicationView, IActivatedEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnActivated(winrt::Windows::ApplicationModel::Core::CoreApplicationView const& applicationView, winrt::Windows::ApplicationModel::Activation::IActivatedEventArgs const& args)
 {
 	// Run() won't start until the CoreWindow is activated.
-	CoreWindow::GetForCurrentThread()->Activate();
+	winrt::Windows::UI::Core::CoreWindow::GetForCurrentThread().Activate();
 }
 
-void App::OnSuspending(Platform::Object^ sender, SuspendingEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnSuspending(IInspectable const& sender, winrt::Windows::ApplicationModel::SuspendingEventArgs const& args)
 {
 	// Save app state asynchronously after requesting a deferral. Holding a deferral
 	// indicates that the application is busy performing suspending operations. Be
 	// aware that a deferral may not be held indefinitely. After about five seconds,
 	// the app will be forced to exit.
-	SuspendingDeferral^ deferral = args->SuspendingOperation->GetDeferral();
+	winrt::Windows::ApplicationModel::SuspendingDeferral const& deferral = args.SuspendingOperation().GetDeferral();
 
-	create_task([this, deferral]()
+	Concurrency::create_task([this, deferral]()
 	{
         m_deviceResources->Trim();
 
 		// Insert your code here.
 
-		deferral->Complete();
+		deferral.Complete();
 	});
 }
 
-void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
+void MetronomeAmplifiedWindows::App::OnResuming(IInspectable const& sender, IInspectable const& args)
 {
 	// Restore any data or state that was unloaded on suspend. By default, data
 	// and state are persisted when resuming from suspend. Note that this event
@@ -161,50 +121,50 @@ void App::OnResuming(Platform::Object^ sender, Platform::Object^ args)
 
 // Window event handlers.
 
-void App::OnWindowSizeChanged(CoreWindow^ sender, WindowSizeChangedEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnWindowSizeChanged(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::WindowSizeChangedEventArgs const& args)
 {
-	m_deviceResources->SetLogicalSize(Size(sender->Bounds.Width, sender->Bounds.Height));
+	m_deviceResources->SetLogicalSize(winrt::Windows::Foundation::Size(sender.Bounds().Width, sender.Bounds().Height));
 	m_main->CreateWindowSizeDependentResources();
 }
 
-void App::OnVisibilityChanged(CoreWindow^ sender, VisibilityChangedEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnVisibilityChanged(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::VisibilityChangedEventArgs const& args)
 {
-	m_windowVisible = args->Visible;
+	m_windowVisible = args.Visible();
 }
 
-void App::OnWindowClosed(CoreWindow^ sender, CoreWindowEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnWindowClosed(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::CoreWindowEventArgs const& args)
 {
 	m_windowClosed = true;
 }
 
 // DisplayInformation event handlers.
 
-void App::OnDpiChanged(DisplayInformation^ sender, Object^ args)
+void MetronomeAmplifiedWindows::App::OnDpiChanged(winrt::Windows::Graphics::Display::DisplayInformation const& sender, IInspectable const& args)
 {
 	// Note: The value for LogicalDpi retrieved here may not match the effective DPI of the app
 	// if it is being scaled for high resolution devices. Once the DPI is set on DeviceResources,
 	// you should always retrieve it using the GetDpi method.
 	// See DeviceResources.cpp for more details.
-	m_deviceResources->SetDpi(sender->LogicalDpi);
+	m_deviceResources->SetDpi(sender.LogicalDpi());
 	m_main->CreateWindowSizeDependentResources();
 }
 
-void App::OnOrientationChanged(DisplayInformation^ sender, Object^ args)
+void MetronomeAmplifiedWindows::App::OnOrientationChanged(winrt::Windows::Graphics::Display::DisplayInformation const& sender, IInspectable const& args)
 {
-	m_deviceResources->SetCurrentOrientation(sender->CurrentOrientation);
+	m_deviceResources->SetCurrentOrientation(sender.CurrentOrientation());
 	m_main->CreateWindowSizeDependentResources();
 }
 
-void App::OnDisplayContentsInvalidated(DisplayInformation^ sender, Object^ args)
+void MetronomeAmplifiedWindows::App::OnDisplayContentsInvalidated(winrt::Windows::Graphics::Display::DisplayInformation const& sender, IInspectable const& args)
 {
 	m_deviceResources->ValidateDevice();
 }
 
-void App::OnPointerPressed(CoreWindow^ sender, PointerEventArgs^ args)
+void MetronomeAmplifiedWindows::App::OnPointerPressed(winrt::Windows::UI::Core::CoreWindow const& sender, winrt::Windows::UI::Core::PointerEventArgs const& args)
 {
-	uint32 pointerId = args->CurrentPoint->PointerId;
-	DirectX::XMFLOAT2 position = DirectX::XMFLOAT2(args->CurrentPoint->Position.X, args->CurrentPoint->Position.Y);
-	Windows::Foundation::Size size = m_deviceResources->GetOutputSize();
+	//uint32_t pointerId = args.CurrentPoint().PointerId();
+	DirectX::XMFLOAT2 position = DirectX::XMFLOAT2(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
+	winrt::Windows::Foundation::Size size = m_deviceResources->GetOutputSize();
 	float normalisedX = 2.0f * position.x / size.Width - 1.0f;
 	float normalisedY = 1.0f - (2.0f * position.y / size.Height - 1.0f);
 	m_main->OnPointerPressed(normalisedX, normalisedY);

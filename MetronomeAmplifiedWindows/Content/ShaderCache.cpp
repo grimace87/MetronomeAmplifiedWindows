@@ -33,7 +33,7 @@ void cache::ShaderCache::RequireShaders(ID3D11Device3* device, ID3D11DeviceConte
             t.get();
             m_shadersAreFulfilled = true;
         }
-        catch (Platform::COMException^ e) {
+        catch (const std::exception& e) {
             OutputDebugString(L"Failed to create a shader");
             throw e;
         }

@@ -12,7 +12,8 @@ namespace vbo {
 
 	enum class ClassId {
 		MAIN_SCREEN_BG,
-		ICON_LABELS
+		ICON_LABELS,
+		SETTINGS_HUB_LABELS
 	};
 
 	class BaseVertexBuffer {
@@ -47,6 +48,14 @@ namespace vbo {
 	class IconLabelsVertexBuffer : public BaseVertexBuffer {
 	public:
 		IconLabelsVertexBuffer();
+		virtual bool IsSizeDependent() override;
+	protected:
+		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
+	};
+
+	class SettingsHubLabelsVertexBuffer : public BaseVertexBuffer {
+	public:
+        SettingsHubLabelsVertexBuffer();
 		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;

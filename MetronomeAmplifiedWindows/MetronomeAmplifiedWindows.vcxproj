@@ -269,6 +269,7 @@
     <ClInclude Include="Content\Resources\Textures.h" />
     <ClInclude Include="Content\Resources\VertexBuffers.h" />
     <ClInclude Include="Content\Scenes\MainSceneRenderer.h" />
+    <ClInclude Include="Content\Scenes\SettingsHubScene.h" />
     <ClInclude Include="Content\ShaderCache.h" />
     <ClInclude Include="Content\TextureCache.h" />
     <ClInclude Include="Content\Traits.h" />
@@ -289,6 +290,7 @@
     <ClCompile Include="Content\Resources\Textures.cpp" />
     <ClCompile Include="Content\Resources\VertexBuffers.cpp" />
     <ClCompile Include="Content\Scenes\MainSceneRenderer.cpp" />
+    <ClCompile Include="Content\Scenes\SettingsHubScene.cpp" />
     <ClCompile Include="Content\ShaderCache.cpp" />
     <ClCompile Include="Content\TextureCache.cpp" />
     <ClCompile Include="Content\VertexBufferCache.cpp" />

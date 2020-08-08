@@ -94,6 +94,9 @@
     <ClCompile Include="Common\DirectXHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Scenes\SettingsHubScene.cpp">
+      <Filter>Content\Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -128,6 +131,9 @@
     </ClInclude>
     <ClInclude Include="Content\Traits.h">
       <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Scenes\SettingsHubScene.h">
+      <Filter>Content\Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

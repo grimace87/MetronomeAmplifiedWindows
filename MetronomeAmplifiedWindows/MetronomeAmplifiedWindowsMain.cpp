@@ -2,7 +2,8 @@
 #include "MetronomeAmplifiedWindowsMain.h"
 #include "Common\DirectXHelper.h"
 
-#include "Content/Scenes/MainSceneRenderer.h"
+//#include "Content/Scenes/MainSceneRenderer.h"
+#include "Content/Scenes/SettingsHubScene.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -14,7 +15,7 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	m_deviceResources->RegisterDeviceNotify(this);
 
 	// Content initialisation
-	Scene* firstScene = new MainSceneRenderer(m_deviceResources);
+	Scene* firstScene = new SettingsHubScene(m_deviceResources);
 	m_sceneStack.push(firstScene);
 
 	// TODO: Change the timer settings if you want something other than the default variable timestep mode.

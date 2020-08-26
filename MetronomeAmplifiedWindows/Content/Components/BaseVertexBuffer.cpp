@@ -3,7 +3,9 @@
 
 #include "Common/DeviceResources.h"
 #include "VertexBuffers/BackgroundVertexBuffer.h"
-#include "VertexBuffers/IconLabelsVertexBuffer.h"
+#include "VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.h"
+#include "VertexBuffers/MainScreenIconsVertexBuffer.h"
+#include "VertexBuffers/MainScreenIconLabelsVertexBuffer.h"
 #include "VertexBuffers/SettingsHubLabelsVertexBuffer.h"
 
 vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0), m_isValid(false)
@@ -50,10 +52,14 @@ void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord bu
 vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 {
 	switch (id) {
-	case ClassId::MAIN_SCREEN_BG:
+	case ClassId::BG:
 		return new BackgroundVertexBuffer();
-	case ClassId::ICON_LABELS:
-		return new IconLabelsVertexBuffer();
+	case ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY:
+		return new MainScreenTranslucentOverlayVertexBuffer();
+	case ClassId::MAIN_SCREEN_ICONS:
+		return new MainScreenIconsVertexBuffer();
+	case ClassId::MAIN_SCREEN_ICON_LABELS:
+		return new MainScreenIconLabelsVertexBuffer();
 	case ClassId::SETTINGS_HUB_LABELS:
 		return new SettingsHubLabelsVertexBuffer();
 	default:

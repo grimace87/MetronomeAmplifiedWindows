@@ -34,7 +34,7 @@ std::vector<vbo::ClassId> SettingsHubScene::GetRequiredSizeIndependentVertexBuff
 
 std::vector<vbo::ClassId> SettingsHubScene::GetRequiredSizeDependentVertexBuffers()
 {
-	return { vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::SETTINGS_HUB_LABELS };
+	return { vbo::ClassId::BG, vbo::ClassId::SETTINGS_HUB_LABELS };
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
@@ -68,13 +68,12 @@ void SettingsHubScene::Render()
 	m_deviceResources->ActivateLinearSamplerState();
 
 	// Get and activate the vertex buffer
-	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_BG);
+	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
 	backgroundVertexBuffer->Activate(context);
 
 	// Draw the objects.
-	UINT vertexTotal = backgroundVertexBuffer->GetVertexCount();
 	context->Draw(
-		6,
+		backgroundVertexBuffer->GetVertexCount(),
 		0
 	);
 

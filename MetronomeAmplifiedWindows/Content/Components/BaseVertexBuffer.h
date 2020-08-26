@@ -11,8 +11,10 @@ namespace DX {
 namespace vbo {
 
 	enum class ClassId {
-		MAIN_SCREEN_BG,
-		ICON_LABELS,
+		BG,
+		MAIN_SCREEN_TRANSLUCENT_OVERLAY,
+		MAIN_SCREEN_ICONS,
+		MAIN_SCREEN_ICON_LABELS,
 		SETTINGS_HUB_LABELS
 	};
 

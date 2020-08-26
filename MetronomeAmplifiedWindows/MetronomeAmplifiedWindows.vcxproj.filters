@@ -127,10 +127,16 @@
     <ClCompile Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.cpp">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.cpp">
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.cpp">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.cpp">
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenIconLabelsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenIconsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.cpp">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -192,10 +198,16 @@
     <ClInclude Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.h">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.h">
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.h">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.h">
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenIconLabelsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenIconsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.h">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,7 +33,7 @@ set(LIBRARY_SOURCES
         Content/Components/Textures/WoodTexture.cpp
         Content/Components/BaseVertexBuffer.cpp
         Content/Components/VertexBuffers/BackgroundVertexBuffer.cpp
-        Content/Components/VertexBuffers/IconLabelsVertexBuffer.cpp
+        "Content/Components/VertexBuffers/MainScreenIconLabelsVertexBuffer.cpp"
         Content/Components/VertexBuffers/SettingsHubLabelsVertexBuffer.cpp
         Content/Scenes/MainSceneRenderer.cpp
         Content/ShaderCache.cpp
@@ -48,7 +48,7 @@ set(SHADER_SOURCES
 
 include_directories(.)
 
-add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} "Content/Components/VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp" )
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE ./pch.h)
 

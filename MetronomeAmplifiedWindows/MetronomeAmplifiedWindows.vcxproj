@@ -275,7 +275,9 @@
     <ClInclude Include="Content\Components\Textures\OverlayTexture.h" />
     <ClInclude Include="Content\Components\Textures\WoodTexture.h" />
     <ClInclude Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.h" />
-    <ClInclude Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenIconLabelsVertexBuffer.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenIconsVertexBuffer.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.h" />
     <ClInclude Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.h" />
     <ClInclude Include="Content\Scenes\MainSceneRenderer.h" />
     <ClInclude Include="Content\Scenes\SettingsHubScene.h" />
@@ -305,7 +307,9 @@
     <ClCompile Include="Content\Components\Textures\OverlayTexture.cpp" />
     <ClCompile Include="Content\Components\Textures\WoodTexture.cpp" />
     <ClCompile Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.cpp" />
-    <ClCompile Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenIconLabelsVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenIconsVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.cpp" />
     <ClCompile Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.cpp" />
     <ClCompile Include="Content\Scenes\MainSceneRenderer.cpp" />
     <ClCompile Include="Content\Scenes\SettingsHubScene.cpp" />

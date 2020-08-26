@@ -35,7 +35,7 @@ std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeIndependentVertexBuf
 
 std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeDependentVertexBuffers()
 {
-	return { vbo::ClassId::MAIN_SCREEN_BG, vbo::ClassId::ICON_LABELS };
+	return { vbo::ClassId::BG, vbo::ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY, vbo::ClassId::MAIN_SCREEN_ICONS, vbo::ClassId::MAIN_SCREEN_ICON_LABELS };
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
@@ -68,14 +68,11 @@ void MainSceneRenderer::Render()
 	// Set the sampler state
 	m_deviceResources->ActivateLinearSamplerState();
 
-	// Get and activate the vertex buffer
-	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_BG);
+	// Draw background
+	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
 	backgroundVertexBuffer->Activate(context);
-
-	// Draw the objects.
-	UINT vertexTotal = backgroundVertexBuffer->GetVertexCount();
 	context->Draw(
-		6,
+		backgroundVertexBuffer->GetVertexCount(),
 		0
 	);
 
@@ -86,10 +83,12 @@ void MainSceneRenderer::Render()
 	// Set the sampler state
 	m_deviceResources->ActivatePointSamplerState();
 
-	// Draw the objects.
+	// Draw overlay
+	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY);
+	overlayVertexBuffer->Activate(context);
 	context->Draw(
-		vertexTotal - 42,
-		6
+		overlayVertexBuffer->GetVertexCount(),
+		0
 	);
 
 	// Set the texture for the UI icon vertices
@@ -99,10 +98,12 @@ void MainSceneRenderer::Render()
 	// Set the sampler state
 	m_deviceResources->ActivateLinearSamplerState();
 
-	// Draw the objects.
+	// Draw icons
+	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICONS);
+	iconsVertexBuffer->Activate(context);
 	context->Draw(
-		36,
-		vertexTotal - 36
+		iconsVertexBuffer->GetVertexCount(),
+		0
 	);
 
 	// Set font shader
@@ -114,14 +115,11 @@ void MainSceneRenderer::Render()
 	auto fontTexture = m_deviceResources->GetTexture(texture::ClassId::FONT_TEXTURE);
 	fontTexture->Activate(context);
 
-	// Set text VBO
-	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::ICON_LABELS);
+	// Draw icon labels
+	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICON_LABELS);
 	fontVertexBuffer->Activate(context);
-	auto fontVertexCount = fontVertexBuffer->GetVertexCount();
-
-	// Draw the objects.
 	context->Draw(
-		fontVertexCount,
+		fontVertexBuffer->GetVertexCount(),
 		0
 	);
 }

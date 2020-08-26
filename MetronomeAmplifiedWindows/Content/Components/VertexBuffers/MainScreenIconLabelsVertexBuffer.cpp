@@ -1,18 +1,18 @@
 #include "pch.h"
-#include "IconLabelsVertexBuffer.h"
+#include "MainScreenIconLabelsVertexBuffer.h"
 
 #include "../../../Common/DeviceResources.h"
 
-vbo::IconLabelsVertexBuffer::IconLabelsVertexBuffer()
+vbo::MainScreenIconLabelsVertexBuffer::MainScreenIconLabelsVertexBuffer()
 {
 }
 
-bool vbo::IconLabelsVertexBuffer::IsSizeDependent()
+bool vbo::MainScreenIconLabelsVertexBuffer::IsSizeDependent()
 {
 	return true;
 }
 
-Concurrency::task<void> vbo::IconLabelsVertexBuffer::MakeInitTask(DX::DeviceResources* resources)
+Concurrency::task<void> vbo::MainScreenIconLabelsVertexBuffer::MakeInitTask(DX::DeviceResources* resources)
 {
 	// Coordinates used in the vertex buffer depend on the window size
 	return Concurrency::create_task([this, resources]() -> void {

@@ -4,9 +4,9 @@
 
 namespace vbo
 {
-	class IconLabelsVertexBuffer : public BaseVertexBuffer {
+	class MainScreenIconsVertexBuffer : public BaseVertexBuffer {
 	public:
-		IconLabelsVertexBuffer();
+		MainScreenIconsVertexBuffer();
 		virtual bool IsSizeDependent() override;
 	protected:
 		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;

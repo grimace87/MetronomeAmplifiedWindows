@@ -122,7 +122,17 @@ font::Font* font::Font::MakeFromFileContents(const std::vector<byte>& fileData) 
 /// Generate VBO data to render supplied text, writing into the provided vector of VertexTexCoord structs.
 /// Required space in the vector, starting at the startIndex offset, is 6 VertexTexCoord structs per character.
 /// </summary>
-void font::Font::PrintTextIntoVboCentredInside(std::vector<structures::VertexTexCoord>& vboData, int startIndex, std::string& textToRender, float left, float top, float boxWidth, float boxHeight, float maxHeightPixels, winrt::Windows::Foundation::Size size)
+void font::Font::PrintTextIntoVbo(
+    std::vector<structures::VertexTexCoord>& vboData,
+    int startIndex,
+    std::string& textToRender,
+    float left,
+    float top,
+    float boxWidth,
+    float boxHeight,
+    float maxHeightPixels,
+    winrt::Windows::Foundation::Size size,
+    Gravity horizontalGravity)
 {
     // Assign buffer, with 6 vertices per character and 5 or 8 floats per vertex
     const size_t floatsPerVertex = 6U;
@@ -141,7 +151,17 @@ void font::Font::PrintTextIntoVboCentredInside(std::vector<structures::VertexTex
         Glyph& glyph = m_glyphs.at(c);
         renderWidthPixels += glyph.advanceX * screenPixelsPerFontPixel;
     }
-    const float marginXPixels = 0.5f * (targetWidthPixels - renderWidthPixels);
+    float marginXPixels;
+    switch (horizontalGravity) {
+    case Gravity::START:
+        marginXPixels = 0.0f;
+        break;
+    case Gravity::CENTER:
+        marginXPixels = 0.5f * (targetWidthPixels - renderWidthPixels);
+        break;
+    default:
+        marginXPixels = targetWidthPixels - renderWidthPixels;
+    }
     const float marginYPixels = 0.5f * (targetHeightPixels - renderHeightPixels);
 
     // Start building the buffer

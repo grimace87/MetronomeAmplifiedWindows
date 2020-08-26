@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Content/Resources/Shaders.h"
-#include "Content/Resources/Textures.h"
-#include "Content/Resources/VertexBuffers.h"
+#include "Content/Components/BaseShader.h"
+#include "Content/Components/BaseTexture.h"
+#include "Content/Components/BaseVertexBuffer.h"
 
 class StackHost;
 

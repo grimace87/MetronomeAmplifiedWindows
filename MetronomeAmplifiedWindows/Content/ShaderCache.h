@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resources/Shaders.h"
+#include "Components/BaseShader.h"
 
 #include <map>
 

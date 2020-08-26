@@ -265,9 +265,18 @@
     <ClInclude Include="Common\DeviceResources.h" />
     <ClInclude Include="Common\Font.h" />
     <ClInclude Include="Common\WICTextureLoader.h" />
-    <ClInclude Include="Content\Resources\Shaders.h" />
-    <ClInclude Include="Content\Resources\Textures.h" />
-    <ClInclude Include="Content\Resources\VertexBuffers.h" />
+    <ClInclude Include="Content\Components\BaseShader.h" />
+    <ClInclude Include="Content\Components\BaseTexture.h" />
+    <ClInclude Include="Content\Components\BaseVertexBuffer.h" />
+    <ClInclude Include="Content\Components\Shaders\AlphaTextureShader.h" />
+    <ClInclude Include="Content\Components\Shaders\FontShader.h" />
+    <ClInclude Include="Content\Components\Textures\FontTexture.h" />
+    <ClInclude Include="Content\Components\Textures\IconsTexture.h" />
+    <ClInclude Include="Content\Components\Textures\OverlayTexture.h" />
+    <ClInclude Include="Content\Components\Textures\WoodTexture.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.h" />
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.h" />
     <ClInclude Include="Content\Scenes\MainSceneRenderer.h" />
     <ClInclude Include="Content\Scenes\SettingsHubScene.h" />
     <ClInclude Include="Content\ShaderCache.h" />
@@ -286,9 +295,18 @@
     <ClCompile Include="Common\DirectXHelper.cpp" />
     <ClCompile Include="Common\Font.cpp" />
     <ClCompile Include="Common\WICTextureLoader.cpp" />
-    <ClCompile Include="Content\Resources\Shaders.cpp" />
-    <ClCompile Include="Content\Resources\Textures.cpp" />
-    <ClCompile Include="Content\Resources\VertexBuffers.cpp" />
+    <ClCompile Include="Content\Components\BaseShader.cpp" />
+    <ClCompile Include="Content\Components\BaseTexture.cpp" />
+    <ClCompile Include="Content\Components\BaseVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\Shaders\AlphaTextureShader.cpp" />
+    <ClCompile Include="Content\Components\Shaders\FontShader.cpp" />
+    <ClCompile Include="Content\Components\Textures\FontTexture.cpp" />
+    <ClCompile Include="Content\Components\Textures\IconsTexture.cpp" />
+    <ClCompile Include="Content\Components\Textures\OverlayTexture.cpp" />
+    <ClCompile Include="Content\Components\Textures\WoodTexture.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.cpp" />
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.cpp" />
     <ClCompile Include="Content\Scenes\MainSceneRenderer.cpp" />
     <ClCompile Include="Content\Scenes\SettingsHubScene.cpp" />
     <ClCompile Include="Content\ShaderCache.cpp" />
@@ -312,51 +330,51 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\Shaders\AlphaTexturePixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\AlphaTextureVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\FontPixelShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\FontVertexShader.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Assets\Definitions\Orkney.fnt">
       <DeploymentContent>true</DeploymentContent>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Content\ShaderSource\AlphaTexturePixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\AlphaTextureVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

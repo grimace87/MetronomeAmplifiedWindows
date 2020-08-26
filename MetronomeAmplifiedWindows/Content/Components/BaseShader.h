@@ -2,8 +2,6 @@
 
 #include <string>
 
-#include "../ShaderStructures.h"
-
 namespace shader {
 
 	enum class ClassId {
@@ -36,28 +34,5 @@ namespace shader {
 		Concurrency::task<void> MakeCompileTask(ID3D11Device3* device);
 		void Activate(ID3D11DeviceContext3* context);
 		void Reset();
-	};
-
-	class AlphaTexture : public BaseShader {
-	public:
-		AlphaTexture();
-	protected:
-		std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
-		bool HasConstantBuffer() override;
-		UINT GetConstantBufferSize() override;
-		void* GetConstantBufferData() override;
-	};
-
-	class FontShader : public BaseShader {
-	public:
-		FontShader();
-		void SetPaintColor(float r, float g, float b, float a);
-	protected:
-		std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
-		bool HasConstantBuffer() override;
-		UINT GetConstantBufferSize() override;
-		void* GetConstantBufferData() override;
-	private:
-		structures::PaintColorConstantBuffer m_paintColorData;
 	};
 }

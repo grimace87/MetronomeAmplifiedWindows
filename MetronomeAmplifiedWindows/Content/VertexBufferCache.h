@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resources/VertexBuffers.h"
+#include "Components/BaseVertexBuffer.h"
 #include "Common/Font.h"
 
 #include <map>

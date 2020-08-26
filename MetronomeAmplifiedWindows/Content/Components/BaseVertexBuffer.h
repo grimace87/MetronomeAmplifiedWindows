@@ -36,28 +36,4 @@ namespace vbo {
 		inline bool IsValid() { return m_isValid; }
 		inline UINT GetVertexCount() { return m_vertexCount; }
 	};
-
-	class MainScreenBgVertexBuffer : public BaseVertexBuffer {
-	public:
-		MainScreenBgVertexBuffer();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
-
-	class IconLabelsVertexBuffer : public BaseVertexBuffer {
-	public:
-		IconLabelsVertexBuffer();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
-
-	class SettingsHubLabelsVertexBuffer : public BaseVertexBuffer {
-	public:
-        SettingsHubLabelsVertexBuffer();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
 }

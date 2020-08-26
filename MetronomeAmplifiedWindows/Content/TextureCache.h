@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Resources/Textures.h"
+#include "Components/BaseTexture.h"
 
 #include <map>
 

@@ -23,9 +23,18 @@ set(LIBRARY_SOURCES
         Common/DirectXHelper.cpp
         Common/WICTextureLoader.cpp
         Common/Font.cpp
-        Content/Resources/Shaders.cpp
-        Content/Resources/Textures.cpp
-        Content/Resources/VertexBuffers.cpp
+        Content/Components/BaseShader.cpp
+        Content/Components/Shaders/AlphaTextureShader.cpp
+        Content/Components/Shaders/FontShader.cpp
+        Content/Components/BaseTexture.cpp
+        Content/Components/Textures/FontTexture.cpp
+        Content/Components/Textures/IconsTexture.cpp
+        Content/Components/Textures/OverlayTexture.cpp
+        Content/Components/Textures/WoodTexture.cpp
+        Content/Components/BaseVertexBuffer.cpp
+        Content/Components/VertexBuffers/BackgroundVertexBuffer.cpp
+        Content/Components/VertexBuffers/IconLabelsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsHubLabelsVertexBuffer.cpp
         Content/Scenes/MainSceneRenderer.cpp
         Content/ShaderCache.cpp
         Content/TextureCache.cpp

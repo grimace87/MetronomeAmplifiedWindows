@@ -35,36 +35,4 @@ namespace texture {
 		void Reset();
 		inline bool IsValid() { return m_isValid; }
 	};
-
-	class WoodTexture : public BaseTexture {
-	public:
-		WoodTexture();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
-
-	class OverlayTexture : public BaseTexture {
-	public:
-		OverlayTexture();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
-
-	class FontTexture : public BaseTexture {
-	public:
-		FontTexture();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
-
-	class IconsTexture : public BaseTexture {
-	public:
-		IconsTexture();
-		virtual bool IsSizeDependent() override;
-	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
-	};
 }

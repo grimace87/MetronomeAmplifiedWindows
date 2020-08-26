@@ -44,9 +44,6 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Filter Include="Content\Resources">
-      <UniqueIdentifier>{da4292ae-2828-47a8-8028-2c9ef3b3c945}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Definitions">
       <UniqueIdentifier>{d87b7c3b-fc5e-49a1-b3e9-1e7949b19705}</UniqueIdentifier>
     </Filter>
@@ -59,6 +56,18 @@
     <Filter Include="Assets\Textures">
       <UniqueIdentifier>{5a332e77-8dc3-4826-a800-93eb45003aa9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Content\Components">
+      <UniqueIdentifier>{da4292ae-2828-47a8-8028-2c9ef3b3c945}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Components\Shaders">
+      <UniqueIdentifier>{825a42c2-559d-43a1-aec2-e6d6899c92d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Components\Textures">
+      <UniqueIdentifier>{45430948-0748-46e5-8ee8-6af6baf1073e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\Components\VertexBuffers">
+      <UniqueIdentifier>{750d79b4-4205-43b8-bfb5-261e5f8ce3a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -69,15 +78,6 @@
     </ClCompile>
     <ClCompile Include="Content\ShaderCache.cpp">
       <Filter>Content</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Resources\Shaders.cpp">
-      <Filter>Content\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Resources\Textures.cpp">
-      <Filter>Content\Resources</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Resources\VertexBuffers.cpp">
-      <Filter>Content\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Content\TextureCache.cpp">
       <Filter>Content</Filter>
@@ -97,6 +97,42 @@
     <ClCompile Include="Content\Scenes\SettingsHubScene.cpp">
       <Filter>Content\Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Components\BaseShader.cpp">
+      <Filter>Content\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\BaseTexture.cpp">
+      <Filter>Content\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\BaseVertexBuffer.cpp">
+      <Filter>Content\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Shaders\AlphaTextureShader.cpp">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Shaders\FontShader.cpp">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Textures\FontTexture.cpp">
+      <Filter>Content\Components\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Textures\IconsTexture.cpp">
+      <Filter>Content\Components\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Textures\OverlayTexture.cpp">
+      <Filter>Content\Components\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Textures\WoodTexture.cpp">
+      <Filter>Content\Components\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -107,15 +143,6 @@
     </ClInclude>
     <ClInclude Include="Content\ShaderCache.h">
       <Filter>Content</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Resources\Shaders.h">
-      <Filter>Content\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Resources\Textures.h">
-      <Filter>Content\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Resources\VertexBuffers.h">
-      <Filter>Content\Resources</Filter>
     </ClInclude>
     <ClInclude Include="Content\TextureCache.h">
       <Filter>Content</Filter>
@@ -134,6 +161,42 @@
     </ClInclude>
     <ClInclude Include="Content\Scenes\SettingsHubScene.h">
       <Filter>Content\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\BaseShader.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\BaseTexture.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\BaseVertexBuffer.h">
+      <Filter>Content\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Shaders\AlphaTextureShader.h">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Shaders\FontShader.h">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Textures\FontTexture.h">
+      <Filter>Content\Components\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Textures\IconsTexture.h">
+      <Filter>Content\Components\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Textures\OverlayTexture.h">
+      <Filter>Content\Components\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Textures\WoodTexture.h">
+      <Filter>Content\Components\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\BackgroundVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\IconLabelsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsHubLabelsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -154,22 +217,22 @@
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Content\Shaders\AlphaTexturePixelShader.hlsl">
-      <Filter>Content\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\AlphaTextureVertexShader.hlsl">
-      <Filter>Content\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\FontPixelShader.hlsl">
-      <Filter>Content\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Content\Shaders\FontVertexShader.hlsl">
-      <Filter>Content\Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Assets\Definitions\Orkney.fnt">
       <Filter>Assets\Definitions</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Content\ShaderSource\AlphaTexturePixelShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\AlphaTextureVertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontPixelShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontVertexShader.hlsl">
+      <Filter>Content\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 #include "SettingsHubScene.h"
 
 #include "..\Common\DirectXHelper.h"
+#include "../Components/Shaders/FontShader.h"
 
 using namespace MetronomeAmplifiedWindows;
 

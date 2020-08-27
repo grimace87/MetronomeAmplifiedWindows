@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "SettingsHubScene.h"
 
-#include "..\Common\DirectXHelper.h"
+#include "../Common/DirectXHelper.h"
 #include "../Components/Shaders/FontShader.h"
+#include "SettingsNavigationScene.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -108,4 +109,5 @@ void SettingsHubScene::Render()
 
 void SettingsHubScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
+	stackHost->pushScene(new SettingsNavigationScene(m_deviceResources));
 }

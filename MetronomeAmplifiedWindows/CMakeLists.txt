@@ -48,7 +48,7 @@ set(SHADER_SOURCES
 
 include_directories(.)
 
-add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} "Content/Components/VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp" )
+add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} "Content/Components/VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp"  "Content/Scenes/SettingsNavigationScene.cpp" "Content/Components/Textures/SampleImageTexture.cpp" "Content/Components/VertexBuffers/SettingsDetailsTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsDetailsIconsVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsNavigatingTextsVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsNavigatingImagesVertexBuffer.cpp")
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE ./pch.h)
 

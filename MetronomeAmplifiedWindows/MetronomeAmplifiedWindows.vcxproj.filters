@@ -139,6 +139,24 @@
     <ClCompile Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.cpp">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Scenes\SettingsNavigationScene.cpp">
+      <Filter>Content\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Textures\SampleImageTexture.cpp">
+      <Filter>Content\Components\Textures</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsDetailsIconsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsDetailsTranslucentOverlayVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsNavigatingImagesVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\VertexBuffers\SettingsNavigatingTextsVertexBuffer.cpp">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -210,6 +228,24 @@
     <ClInclude Include="Content\Components\VertexBuffers\MainScreenTranslucentOverlayVertexBuffer.h">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Scenes\SettingsNavigationScene.h">
+      <Filter>Content\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Textures\SampleImageTexture.h">
+      <Filter>Content\Components\Textures</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsDetailsIconsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsDetailsTranslucentOverlayVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsNavigatingImagesVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\VertexBuffers\SettingsNavigatingTextsVertexBuffer.h">
+      <Filter>Content\Components\VertexBuffers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -222,6 +258,9 @@
       <Filter>Assets\Textures</Filter>
     </Image>
     <Image Include="Assets\Textures\icons.png">
+      <Filter>Assets\Textures</Filter>
+    </Image>
+    <Image Include="Assets\Textures\sample_screenshot.png">
       <Filter>Assets\Textures</Filter>
     </Image>
   </ItemGroup>

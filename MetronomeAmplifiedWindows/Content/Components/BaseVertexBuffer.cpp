@@ -7,6 +7,10 @@
 #include "VertexBuffers/MainScreenIconsVertexBuffer.h"
 #include "VertexBuffers/MainScreenIconLabelsVertexBuffer.h"
 #include "VertexBuffers/SettingsHubLabelsVertexBuffer.h"
+#include "VertexBuffers/SettingsDetailsTranslucentOverlayVertexBuffer.h"
+#include "VertexBuffers/SettingsDetailsIconsVertexBuffer.h"
+#include "VertexBuffers/SettingsNavigatingImagesVertexBuffer.h"
+#include "VertexBuffers/SettingsNavigatingTextsVertexBuffer.h"
 
 vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0), m_isValid(false)
 {
@@ -62,6 +66,14 @@ vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 		return new MainScreenIconLabelsVertexBuffer();
 	case ClassId::SETTINGS_HUB_LABELS:
 		return new SettingsHubLabelsVertexBuffer();
+	case ClassId::HELP_DETAILS_OVERLAY:
+		return new SettingsDetailsTranslucentOverlayVertexBuffer();
+	case ClassId::HELP_DETAILS_ICONS:
+		return new SettingsDetailsIconsVertexBuffer();
+	case ClassId::HELP_NAVIGATING_IMAGES:
+		return new SettingsNavigatingImagesVertexBuffer();
+	case ClassId::HELP_NAVIGATING_TEXTS:
+		return new SettingsNavigatingTextsVertexBuffer();
 	default:
 		throw std::exception("Requested VBO class does not exist");
 	}

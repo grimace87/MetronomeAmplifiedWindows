@@ -1,50 +1,49 @@
 #include "pch.h"
-#include "MainSceneRenderer.h"
+#include "SettingsNavigationScene.h"
 
 #include "../Common/DirectXHelper.h"
 #include "../Components/Shaders/FontShader.h"
-#include "SettingsHubScene.h"
 
 using namespace MetronomeAmplifiedWindows;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
-MainSceneRenderer::MainSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
+SettingsNavigationScene::SettingsNavigationScene(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources)
 {
 }
 
-std::vector<shader::ClassId> MainSceneRenderer::GetRequiredShaders()
+std::vector<shader::ClassId> SettingsNavigationScene::GetRequiredShaders()
 {
 	return { shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT };
 }
 
-std::vector<texture::ClassId> MainSceneRenderer::GetRequiredSizeIndependentTextures()
+std::vector<texture::ClassId> SettingsNavigationScene::GetRequiredSizeIndependentTextures()
 {
-	return { texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE, texture::ClassId::ICONS_TEXTURE };
+	return { texture::ClassId::WOOD_TEXTURE, texture::ClassId::FONT_TEXTURE, texture::ClassId::ICONS_TEXTURE, texture::ClassId::SAMPLE_IMAGE };
 }
 
-std::vector<texture::ClassId> MainSceneRenderer::GetRequiredSizeDependentTextures()
+std::vector<texture::ClassId> SettingsNavigationScene::GetRequiredSizeDependentTextures()
 {
 	return { texture::ClassId::OVERLAY_TEXTURE };
 }
 
-std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeIndependentVertexBuffers()
+std::vector<vbo::ClassId> SettingsNavigationScene::GetRequiredSizeIndependentVertexBuffers()
 {
 	return {};
 }
 
-std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeDependentVertexBuffers()
+std::vector<vbo::ClassId> SettingsNavigationScene::GetRequiredSizeDependentVertexBuffers()
 {
-	return { vbo::ClassId::BG, vbo::ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY, vbo::ClassId::MAIN_SCREEN_ICONS, vbo::ClassId::MAIN_SCREEN_ICON_LABELS };
+	return { vbo::ClassId::BG, vbo::ClassId::HELP_DETAILS_OVERLAY, vbo::ClassId::HELP_DETAILS_ICONS, vbo::ClassId::HELP_NAVIGATING_TEXTS, vbo::ClassId::HELP_NAVIGATING_IMAGES };
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
-void MainSceneRenderer::Update(DX::StepTimer const& timer)
+void SettingsNavigationScene::Update(DX::StepTimer const& timer)
 {
 }
 
 // Renders one frame using the vertex and pixel shaders.
-void MainSceneRenderer::Render()
+void SettingsNavigationScene::Render()
 {
 	// Loading is asynchronous. Only draw geometry after it's loaded.
 	if (!m_deviceResources->AreShadersFulfilled() || !m_deviceResources->AreTexturesFulfilled() || !m_deviceResources->AreVertexBuffersFulfilled())
@@ -84,7 +83,7 @@ void MainSceneRenderer::Render()
 	m_deviceResources->ActivatePointSamplerState();
 
 	// Draw overlay
-	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY);
+	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_OVERLAY);
 	overlayVertexBuffer->Activate(context);
 	context->Draw(
 		overlayVertexBuffer->GetVertexCount(),
@@ -99,32 +98,54 @@ void MainSceneRenderer::Render()
 	m_deviceResources->ActivateLinearSamplerState();
 
 	// Draw icons
-	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICONS);
+	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_ICONS);
 	iconsVertexBuffer->Activate(context);
 	context->Draw(
 		iconsVertexBuffer->GetVertexCount(),
 		0
 	);
 
+	// Set the texture for the screenshots
+	auto screenshotsTexture = m_deviceResources->GetTexture(texture::ClassId::SAMPLE_IMAGE);
+	screenshotsTexture->Activate(context);
+
+	// Draw screenshot
+	auto screenshotsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_IMAGES);
+	screenshotsVertexBuffer->Activate(context);
+	context->Draw(
+		screenshotsVertexBuffer->GetVertexCount(),
+		0
+	);
+
 	// Set font shader
 	shader::FontShader* fontShader = dynamic_cast<shader::FontShader*>(m_deviceResources->GetShader(shader::ClassId::FONT));
-	fontShader->SetPaintColor(0.96f, 0.87f, 0.70f, 1.0f);
+	fontShader->SetPaintColor(1.0f, 1.0f, 1.0f, 1.0f);
 	fontShader->Activate(context);
 
-	// Set the font texture
+	// Set the font texture and VBO
 	auto fontTexture = m_deviceResources->GetTexture(texture::ClassId::FONT_TEXTURE);
 	fontTexture->Activate(context);
-
-	// Draw icon labels
-	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICON_LABELS);
+	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_TEXTS);
 	fontVertexBuffer->Activate(context);
+
+	// Draw heading
 	context->Draw(
-		fontVertexBuffer->GetVertexCount(),
+		108,
 		0
+	);
+
+	// Change font colour
+	fontShader->SetPaintColor(0.0f, 0.0f, 0.0f, 1.0f);
+	fontShader->Activate(context);
+
+	// Draw text
+	context->Draw(
+		fontVertexBuffer->GetVertexCount() - 108,
+		108
 	);
 }
 
-void MainSceneRenderer::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
+void SettingsNavigationScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
-	stackHost->pushScene(new SettingsHubScene(m_deviceResources));
+	
 }

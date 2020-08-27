@@ -8,6 +8,7 @@
 #include "Textures/IconsTexture.h"
 #include "Textures/OverlayTexture.h"
 #include "Textures/WoodTexture.h"
+#include "Textures/SampleImageTexture.h"
 
 texture::BaseTexture::BaseTexture() : m_isValid(false)
 {
@@ -87,6 +88,8 @@ texture::BaseTexture* texture::BaseTexture::NewFromClassId(texture::ClassId id) 
 		return new FontTexture();
 	case ClassId::ICONS_TEXTURE:
 		return new IconsTexture();
+	case ClassId::SAMPLE_IMAGE:
+		return new SampleImageTexture();
 	default:
 		throw std::exception("Requested texture class does not exist");
 	}

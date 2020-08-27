@@ -12,7 +12,8 @@ namespace texture {
 		WOOD_TEXTURE,
 		OVERLAY_TEXTURE,
 		FONT_TEXTURE,
-		ICONS_TEXTURE
+		ICONS_TEXTURE,
+		SAMPLE_IMAGE
 	};
 
 	class BaseTexture {

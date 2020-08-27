@@ -60,17 +60,17 @@ Concurrency::task<void> vbo::MainScreenIconLabelsVertexBuffer::MakeInitTask(DX::
 
 		int bufferIndex = 0;
 		const float maxTextHeightPixels = 1.2f * marginLogicalInches * dpi;
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[0], hIcon1Left, hIconBottom, hIcon2Left - hIcon1Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[0], hIcon1Left, hIconBottom, hIcon2Left - hIcon1Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[0].length();
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[1], hIcon2Left, hIconBottom, hIcon3Left - hIcon2Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[1], hIcon2Left, hIconBottom, hIcon3Left - hIcon2Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[1].length();
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[2], hIcon3Left, hIconBottom, hIcon4Left - hIcon3Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[2], hIcon3Left, hIconBottom, hIcon4Left - hIcon3Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[2].length();
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[3], hIcon4Left, hIconBottom, hIcon4Right - hIcon4Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[3], hIcon4Left, hIconBottom, hIcon4Right - hIcon4Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[3].length();
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[4], w2, hLowerIconsLabelTop, w3 - w2, hLowerIconsLabelTop - h2, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[4], w2, hLowerIconsLabelTop, w3 - w2, hLowerIconsLabelTop - h2, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[4].length();
-		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[5], w8, hLowerIconsLabelTop, w9 - w8, hLowerIconsLabelTop - h2, maxTextHeightPixels, size, font::Gravity::CENTER);
+		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[5], w8, hLowerIconsLabelTop, w9 - w8, hLowerIconsLabelTop - h2, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[5].length();
 
 		m_vertexCount = vboData.size();

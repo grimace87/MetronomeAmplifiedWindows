@@ -51,6 +51,7 @@ namespace font {
             float boxHeight,
             float maxHeightPixels,
             winrt::Windows::Foundation::Size size,
-            Gravity horizontalGravity);
+            Gravity horizontalGravity,
+            Gravity verticalGravity);
     };
 }

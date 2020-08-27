@@ -132,7 +132,8 @@ void font::Font::PrintTextIntoVbo(
     float boxHeight,
     float maxHeightPixels,
     winrt::Windows::Foundation::Size size,
-    Gravity horizontalGravity)
+    Gravity horizontalGravity,
+    Gravity verticalGravity)
 {
     // Assign buffer, with 6 vertices per character and 5 or 8 floats per vertex
     const size_t floatsPerVertex = 6U;
@@ -144,71 +145,125 @@ void font::Font::PrintTextIntoVbo(
     // Convert target area to pixel sizes and coordinates
     const float targetWidthPixels = pixelsPerUnitWidth * boxWidth;
     const float targetHeightPixels = pixelsPerUnitHeight * boxHeight;
-    const float renderHeightPixels = min(targetHeightPixels, maxHeightPixels);
-    const float screenPixelsPerFontPixel = renderHeightPixels / m_lineHeight;
-    float renderWidthPixels = 0.0f;
-    for (char c : textToRender) {
+    const float lineHeightPixels = min(targetHeightPixels, maxHeightPixels);
+    const float screenPixelsPerFontPixel = lineHeightPixels / m_lineHeight;
+
+    // Do an initial pass to determine how many lines need to be rendered, and how many
+    // characters will be on each of those lines
+    std::vector<int> charactersPerLine;
+    std::vector<float> pixelWidthOfLine;
+    float pixelsAcrossThisLine = 0.0f;
+    int currentWordBegunAt = 0;
+    float pixelsIntoThisWord = 0.0f;
+    int charsForThisLine = 0;
+    for (int index = 0; index < textToRender.length(); index++) {
+        const char c = textToRender[index];
         Glyph& glyph = m_glyphs.at(c);
-        renderWidthPixels += glyph.advanceX * screenPixelsPerFontPixel;
+        const float advance = glyph.advanceX * screenPixelsPerFontPixel;
+        pixelsAcrossThisLine += advance;
+        pixelsIntoThisWord += advance;
+        charsForThisLine++;
+        if (c == ' ') {
+            currentWordBegunAt = index + 1;
+            pixelsIntoThisWord = 0.0f;
+        } else if (pixelsAcrossThisLine > targetWidthPixels) {
+            if (index - currentWordBegunAt + 1 == charsForThisLine) {
+                charactersPerLine.push_back(index - currentWordBegunAt);
+                currentWordBegunAt = index;
+                charsForThisLine = 1;
+                pixelWidthOfLine.push_back(pixelsAcrossThisLine - advance);
+                pixelsAcrossThisLine = advance;
+                pixelsIntoThisWord = advance;
+            }
+            else {
+                const int charactersForNextLine = index + 1 - currentWordBegunAt;
+                charactersPerLine.push_back(charsForThisLine - charactersForNextLine);
+                charsForThisLine = charactersForNextLine;
+                pixelWidthOfLine.push_back(pixelsAcrossThisLine - pixelsIntoThisWord);
+                pixelsAcrossThisLine = pixelsIntoThisWord;
+            }
+        }
     }
-    float marginXPixels;
-    switch (horizontalGravity) {
+    if (charsForThisLine > 0) {
+        charactersPerLine.push_back(charsForThisLine);
+        pixelWidthOfLine.push_back(pixelsAcrossThisLine);
+    }
+
+    // Set side margin, horizontal margin depends on supplied gravity
+    const float totalTextHeightPixels = (float)charactersPerLine.size() * lineHeightPixels;
+    float marginYPixels;
+    switch (verticalGravity) {
     case Gravity::START:
-        marginXPixels = 0.0f;
+        marginYPixels = targetHeightPixels - totalTextHeightPixels;
         break;
-    case Gravity::CENTER:
-        marginXPixels = 0.5f * (targetWidthPixels - renderWidthPixels);
+    case Gravity::END:
+        marginYPixels = 0.0f;
         break;
     default:
-        marginXPixels = targetWidthPixels - renderWidthPixels;
+        marginYPixels = 0.5f * (targetHeightPixels - totalTextHeightPixels);
     }
-    const float marginYPixels = 0.5f * (targetHeightPixels - renderHeightPixels);
 
     // Start building the buffer
     int charsRendered = 0;
     const float widthUnitsPerFontPixel = screenPixelsPerFontPixel / pixelsPerUnitWidth;
     const float heightUnitsPerFontPixel = screenPixelsPerFontPixel / pixelsPerUnitHeight;
-    float penX = left + marginXPixels / pixelsPerUnitWidth;
-    const float penY = top - boxHeight + marginYPixels / pixelsPerUnitHeight;
-    float xMin, xMax, yMin, yMax;
-    float sMin, sMax, tMin, tMax;
-    structures::VertexTexCoord quad[6];
-    for (char c : textToRender) {
-        Glyph& glyph = m_glyphs.at(c);
+    float penY = top - boxHeight + marginYPixels / pixelsPerUnitHeight + (float)(charactersPerLine.size() - 1) * lineHeightPixels / pixelsPerUnitHeight;
+    int textIndex = 0;
+    for (int index = 0; index < charactersPerLine.size(); index++) {
+        int charsOnLine = charactersPerLine[index];
+        const float lineWidthPixels = pixelWidthOfLine[index];
+        float marginXPixels;
+        switch (horizontalGravity) {
+        case Gravity::START:
+            marginXPixels = 0.0f;
+            break;
+        case Gravity::END:
+            marginXPixels = targetWidthPixels - lineWidthPixels;
+            break;
+        default:
+            marginXPixels = 0.5f * (targetWidthPixels - lineWidthPixels);
+        }
+        float penX = left + marginXPixels / pixelsPerUnitWidth;
+        structures::VertexTexCoord quad[6];
+        for (int i = 0; i < charsOnLine; i++) {
+            const char c = textToRender[textIndex];
+            textIndex++;
+            Glyph & glyph = m_glyphs[c];
 
-        xMin = penX + (float)glyph.offsetX * widthUnitsPerFontPixel;
-        xMax = xMin + (float)glyph.width * widthUnitsPerFontPixel;
-        yMax = penY + (float)(m_baseHeight - glyph.offsetY) * heightUnitsPerFontPixel;
-        yMin = yMax - (float)glyph.height * heightUnitsPerFontPixel;
+            const float xMin = penX + glyph.offsetX * widthUnitsPerFontPixel;
+            const float xMax = xMin + glyph.width * widthUnitsPerFontPixel;
+            const float yMax = penY + (m_baseHeight - glyph.offsetY) * heightUnitsPerFontPixel;
+            const float yMin = yMax - glyph.height * heightUnitsPerFontPixel;
 
-        sMin = glyph.textureS / FONT_TEXTURE_SIZE;
-        sMax = sMin + glyph.width / FONT_TEXTURE_SIZE;
-        tMin = glyph.textureT / FONT_TEXTURE_SIZE;
-        tMax = tMin + glyph.height / FONT_TEXTURE_SIZE;
+            const float sMin = glyph.textureS / FONT_TEXTURE_SIZE;
+            const float sMax = sMin + glyph.width / FONT_TEXTURE_SIZE;
+            const float tMin = glyph.textureT / FONT_TEXTURE_SIZE;
+            const float tMax = tMin + glyph.height / FONT_TEXTURE_SIZE;
 
-        quad[0].pos = { xMin, yMax, 0.0f };
-        quad[0].tex = { sMin, tMin, 0.0f };
+            quad[0].pos = { xMin, yMax, 0.0f };
+            quad[0].tex = { sMin, tMin, 0.0f };
 
-        quad[1].pos = { xMax, yMax, 0.0f };
-        quad[1].tex = { sMax, tMin, 0.0f };
+            quad[1].pos = { xMax, yMax, 0.0f };
+            quad[1].tex = { sMax, tMin, 0.0f };
 
-        quad[2].pos = { xMax, yMin, 0.0f };
-        quad[2].tex = { sMax, tMax, 0.0f };
+            quad[2].pos = { xMax, yMin, 0.0f };
+            quad[2].tex = { sMax, tMax, 0.0f };
 
-        quad[3].pos = { xMax, yMin, 0.0f };
-        quad[3].tex = { sMax, tMax, 0.0f };
+            quad[3].pos = { xMax, yMin, 0.0f };
+            quad[3].tex = { sMax, tMax, 0.0f };
 
-        quad[4].pos = { xMin, yMin, 0.0f };
-        quad[4].tex = { sMin, tMax, 0.0f };
+            quad[4].pos = { xMin, yMin, 0.0f };
+            quad[4].tex = { sMin, tMax, 0.0f };
 
-        quad[5].pos = { xMin, yMax, 0.0f };
-        quad[5].tex = { sMin, tMin, 0.0f };
+            quad[5].pos = { xMin, yMax, 0.0f };
+            quad[5].tex = { sMin, tMin, 0.0f };
 
-        structures::VertexTexCoord* copyDest = vboData.data() + startIndex + charsRendered * 6;
-        memcpy((void*)copyDest, (void*)&quad, 6 * sizeof(structures::VertexTexCoord));
+            structures::VertexTexCoord* copyDest = vboData.data() + startIndex + charsRendered * 6;
+            memcpy((void*)copyDest, (void*)&quad, 6 * sizeof(structures::VertexTexCoord));
 
-        penX += (float)glyph.advanceX * widthUnitsPerFontPixel;
-        charsRendered++;
-
+            penX += (float)glyph.advanceX * widthUnitsPerFontPixel;
+            charsRendered++;
+        }
+        penY -= lineHeightPixels / pixelsPerUnitHeight;
     }
 }

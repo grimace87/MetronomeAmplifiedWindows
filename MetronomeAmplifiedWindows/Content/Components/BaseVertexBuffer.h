@@ -35,7 +35,7 @@ namespace vbo {
 	public:
 		static BaseVertexBuffer* NewFromClassId(ClassId id);
 		virtual bool IsSizeDependent() = 0;
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) = 0;
+		virtual void Initialise(DX::DeviceResources* resources) = 0;
 		void Activate(ID3D11DeviceContext3* context);
 		void Reset();
 

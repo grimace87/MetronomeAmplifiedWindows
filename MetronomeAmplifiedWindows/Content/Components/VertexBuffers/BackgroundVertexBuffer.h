@@ -9,6 +9,6 @@ namespace vbo
 		BackgroundVertexBuffer();
 		virtual bool IsSizeDependent() override;
 	protected:
-		virtual Concurrency::task<void> MakeInitTask(DX::DeviceResources* resources) override;
+		virtual void Initialise(DX::DeviceResources* resources) override;
 	};
 }

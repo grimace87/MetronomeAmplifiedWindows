@@ -94,7 +94,7 @@ void cache::VertexBufferCache::BuildVertexBuffers(DX::DeviceResources* resources
             }
         }
         vertexBuffer = vbo::BaseVertexBuffer::NewFromClassId(classId);
-        vertexBuffer->MakeInitTask(resources);
+        vertexBuffer->Initialise(resources);
         m_vertexBuffers[classId] = vertexBuffer;
     }
 }

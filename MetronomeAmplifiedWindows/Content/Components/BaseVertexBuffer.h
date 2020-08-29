@@ -25,8 +25,8 @@ namespace vbo {
 	class BaseVertexBuffer {
 	protected:
 		bool m_isValid;
-		UINT m_vertexCount;
 		winrt::com_ptr<ID3D11Buffer> m_vertexBuffer;
+		std::vector<unsigned int> m_subBufferVertexIndices;
 
 		BaseVertexBuffer();
 		void putSquare(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
@@ -40,6 +40,7 @@ namespace vbo {
 		void Reset();
 
 		inline bool IsValid() { return m_isValid; }
-		inline UINT GetVertexCount() { return m_vertexCount; }
+		inline unsigned int IndexOfSubBuffer(int index) { return m_subBufferVertexIndices[index]; }
+		inline unsigned int VerticesInSubBuffer(int index) { return m_subBufferVertexIndices[index + 1] - m_subBufferVertexIndices[index]; }
 	};
 }

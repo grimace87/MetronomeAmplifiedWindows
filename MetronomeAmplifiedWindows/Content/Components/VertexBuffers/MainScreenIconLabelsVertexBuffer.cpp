@@ -59,6 +59,8 @@ Concurrency::task<void> vbo::MainScreenIconLabelsVertexBuffer::MakeInitTask(DX::
 		vboData.resize(totalStructCount);
 
 		int bufferIndex = 0;
+		m_subBufferVertexIndices.resize(2);
+		m_subBufferVertexIndices[0] = 0;
 		const float maxTextHeightPixels = 1.2f * marginLogicalInches * dpi;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[0], hIcon1Left, hIconBottom, hIcon2Left - hIcon1Left, hIconBottom - hIconLabelBottom, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[0].length();
@@ -72,8 +74,7 @@ Concurrency::task<void> vbo::MainScreenIconLabelsVertexBuffer::MakeInitTask(DX::
 		bufferIndex += 6 * labels[4].length();
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[5], w8, hLowerIconsLabelTop, w9 - w8, hLowerIconsLabelTop - h2, maxTextHeightPixels, size, font::Gravity::CENTER, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[5].length();
-
-		m_vertexCount = vboData.size();
+		m_subBufferVertexIndices[1] = bufferIndex;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));

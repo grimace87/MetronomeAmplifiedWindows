@@ -61,7 +61,7 @@ Concurrency::task<void> vbo::MainScreenIconsVertexBuffer::MakeInitTask(DX::Devic
 		putSquareCentredInside(sceneVertices, 24, w2, hLowerIconsLabelTop, w3, h3, 0.0f, 1.0f, 0.25f, 0.5f, size);
 		putSquareCentredInside(sceneVertices, 30, w8, hLowerIconsLabelTop, w9, h3, 0.25f, 1.0f, 0.5f, 0.5f, size);
 
-		m_vertexCount = 36;
+		m_subBufferVertexIndices = { 0, 36 };
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

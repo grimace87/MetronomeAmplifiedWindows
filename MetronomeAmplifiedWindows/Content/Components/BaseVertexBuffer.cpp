@@ -12,7 +12,7 @@
 #include "VertexBuffers/SettingsNavigatingImagesVertexBuffer.h"
 #include "VertexBuffers/SettingsNavigatingTextsVertexBuffer.h"
 
-vbo::BaseVertexBuffer::BaseVertexBuffer() : m_vertexCount(0), m_isValid(false)
+vbo::BaseVertexBuffer::BaseVertexBuffer() : m_subBufferVertexIndices{}, m_isValid(false)
 {
 }
 

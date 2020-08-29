@@ -57,32 +57,41 @@ Concurrency::task<void> vbo::SettingsNavigatingTextsVertexBuffer::MakeInitTask(D
 		vboData.resize(totalStructCount);
 
 		int bufferIndex = 0;
+		m_subBufferVertexIndices.resize(labels.size() + 1);
+		m_subBufferVertexIndices[0] = 0;
 		const float headingTextHeightPixels = 1.2f * marginLogicalInches * dpi;
 		const float bodyTextHeightPixels = 0.9f * marginLogicalInches * dpi;
 
 		// Put heading
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[0], w1, h4, w4 - w1, h4 - h3, headingTextHeightPixels, size, font::Gravity::START, font::Gravity::CENTER);
 		bufferIndex += 6 * labels[0].length();
+		m_subBufferVertexIndices[1] = bufferIndex;
 
 		// Put content texts
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[1], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[1].length();
+		m_subBufferVertexIndices[2] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[2], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[2].length();
+		m_subBufferVertexIndices[3] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[3], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[3].length();
+		m_subBufferVertexIndices[4] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[4], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[4].length();
+		m_subBufferVertexIndices[5] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[5], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[5].length();
+		m_subBufferVertexIndices[6] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[6], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[6].length();
+		m_subBufferVertexIndices[7] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[7], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[7].length();
+		m_subBufferVertexIndices[8] = bufferIndex;
 		orkney->PrintTextIntoVbo(vboData, bufferIndex, labels[8], w2, h2, w3 - w2, h2 - h1, bodyTextHeightPixels, size, font::Gravity::START, font::Gravity::START);
 		bufferIndex += 6 * labels[8].length();
-
-		m_vertexCount = vboData.size();
+		m_subBufferVertexIndices[9] = bufferIndex;
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData;
 		ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));

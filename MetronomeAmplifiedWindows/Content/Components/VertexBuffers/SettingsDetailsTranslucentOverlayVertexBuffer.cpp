@@ -47,7 +47,7 @@ Concurrency::task<void> vbo::SettingsDetailsTranslucentOverlayVertexBuffer::Make
 		putSquare(sceneVertices, 30, w2, h3, w3, h4, 0.5f, 0.5f, 1.0f, 0.0f);
 		putSquare(sceneVertices, 36, w3, h3, w4, h4, 0.5f, 0.5f, 0.0f, 0.0f);
 
-		m_vertexCount = 42;
+		m_subBufferVertexIndices = { 0, 42 };
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

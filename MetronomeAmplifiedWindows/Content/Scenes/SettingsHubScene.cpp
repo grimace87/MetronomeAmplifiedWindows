@@ -74,7 +74,7 @@ void SettingsHubScene::Render()
 
 	// Draw the objects.
 	context->Draw(
-		backgroundVertexBuffer->GetVertexCount(),
+		backgroundVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -90,20 +90,19 @@ void SettingsHubScene::Render()
 	// Set text VBO
 	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::SETTINGS_HUB_LABELS);
 	fontVertexBuffer->Activate(context);
-	auto fontVertexCount = fontVertexBuffer->GetVertexCount();
 
 	// Draw the first line of text
 	context->Draw(
-		78,
-		0
+		fontVertexBuffer->VerticesInSubBuffer(0),
+		fontVertexBuffer->IndexOfSubBuffer(0)
 	);
 
 	// Update the paint colour and draw the rest
 	fontShader->SetPaintColor(0.96f, 0.87f, 0.70f, 1.0f);
 	fontShader->Activate(context);
 	context->Draw(
-		fontVertexCount - 78,
-		78
+		fontVertexBuffer->VerticesInSubBuffer(1),
+		fontVertexBuffer->IndexOfSubBuffer(1)
 	);
 }
 

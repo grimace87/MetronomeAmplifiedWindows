@@ -70,7 +70,7 @@ Concurrency::task<void> vbo::MainScreenTranslucentOverlayVertexBuffer::MakeInitT
 		putSquare(sceneVertices, 96, w2, h5, w9, h6, 0.5f, 0.5f, 1.0f, 0.0f);
 		putSquare(sceneVertices, 102, w9, h5, w10, h6, 0.5f, 0.5f, 0.0f, 0.0f);
 
-		m_vertexCount = 108;
+		m_subBufferVertexIndices = { 0, 108 };
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

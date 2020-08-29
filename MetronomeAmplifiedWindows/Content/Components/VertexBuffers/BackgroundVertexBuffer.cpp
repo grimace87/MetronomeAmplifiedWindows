@@ -21,7 +21,7 @@ Concurrency::task<void> vbo::BackgroundVertexBuffer::MakeInitTask(DX::DeviceReso
 		structures::VertexTexCoord sceneVertices[6];
 		putSquare(sceneVertices, 0, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-		m_vertexCount = 6;
+		m_subBufferVertexIndices = { 0, 6 };
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

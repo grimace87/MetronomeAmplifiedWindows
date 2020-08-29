@@ -37,7 +37,7 @@ Concurrency::task<void> vbo::SettingsNavigatingImagesVertexBuffer::MakeInitTask(
 		structures::VertexTexCoord sceneVertices[6];
 		putSquare(sceneVertices, 0, w1, h1, w2, h2, 0.0f, 1.0f, 1.0f, 0.0f);
 
-		m_vertexCount = 6;
+		m_subBufferVertexIndices = { 0, 6 };
 
 		D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 		vertexBufferData.pSysMem = sceneVertices;

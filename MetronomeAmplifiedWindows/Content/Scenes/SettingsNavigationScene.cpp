@@ -71,7 +71,7 @@ void SettingsNavigationScene::Render()
 	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
 	backgroundVertexBuffer->Activate(context);
 	context->Draw(
-		backgroundVertexBuffer->GetVertexCount(),
+		backgroundVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -86,7 +86,7 @@ void SettingsNavigationScene::Render()
 	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_OVERLAY);
 	overlayVertexBuffer->Activate(context);
 	context->Draw(
-		overlayVertexBuffer->GetVertexCount(),
+		overlayVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -101,7 +101,7 @@ void SettingsNavigationScene::Render()
 	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_ICONS);
 	iconsVertexBuffer->Activate(context);
 	context->Draw(
-		iconsVertexBuffer->GetVertexCount(),
+		iconsVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -113,7 +113,7 @@ void SettingsNavigationScene::Render()
 	auto screenshotsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_IMAGES);
 	screenshotsVertexBuffer->Activate(context);
 	context->Draw(
-		screenshotsVertexBuffer->GetVertexCount(),
+		screenshotsVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -130,8 +130,8 @@ void SettingsNavigationScene::Render()
 
 	// Draw heading
 	context->Draw(
-		108,
-		0
+		fontVertexBuffer->VerticesInSubBuffer(0),
+		fontVertexBuffer->IndexOfSubBuffer(0)
 	);
 
 	// Change font colour
@@ -140,8 +140,8 @@ void SettingsNavigationScene::Render()
 
 	// Draw text
 	context->Draw(
-		fontVertexBuffer->GetVertexCount() - 108,
-		108
+		fontVertexBuffer->VerticesInSubBuffer(1),
+		fontVertexBuffer->IndexOfSubBuffer(1)
 	);
 }
 

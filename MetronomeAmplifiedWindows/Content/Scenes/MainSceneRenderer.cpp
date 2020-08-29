@@ -72,7 +72,7 @@ void MainSceneRenderer::Render()
 	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
 	backgroundVertexBuffer->Activate(context);
 	context->Draw(
-		backgroundVertexBuffer->GetVertexCount(),
+		backgroundVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -87,7 +87,7 @@ void MainSceneRenderer::Render()
 	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_TRANSLUCENT_OVERLAY);
 	overlayVertexBuffer->Activate(context);
 	context->Draw(
-		overlayVertexBuffer->GetVertexCount(),
+		overlayVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -102,7 +102,7 @@ void MainSceneRenderer::Render()
 	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICONS);
 	iconsVertexBuffer->Activate(context);
 	context->Draw(
-		iconsVertexBuffer->GetVertexCount(),
+		iconsVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 
@@ -119,7 +119,7 @@ void MainSceneRenderer::Render()
 	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICON_LABELS);
 	fontVertexBuffer->Activate(context);
 	context->Draw(
-		fontVertexBuffer->GetVertexCount(),
+		fontVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 }

@@ -108,5 +108,16 @@ void SettingsHubScene::Render()
 
 void SettingsHubScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
-	stackHost->pushScene(new SettingsNavigationScene(m_deviceResources));
+	// Make sure VBOs are initialised
+	if (!m_deviceResources->AreShadersFulfilled() || !m_deviceResources->AreTexturesFulfilled() || !m_deviceResources->AreVertexBuffersFulfilled())
+	{
+		return;
+	}
+
+	// Check for region 0 in text labels VBO
+	auto textsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::SETTINGS_HUB_LABELS);
+	int vboRegion = textsVertexBuffer->RegionOfInterestAt(normalisedX, normalisedY);
+	if (vboRegion == 0) {
+		stackHost->pushScene(new SettingsNavigationScene(m_deviceResources));
+	}
 }

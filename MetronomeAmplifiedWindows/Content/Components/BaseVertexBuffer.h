@@ -27,6 +27,7 @@ namespace vbo {
 		bool m_isValid;
 		winrt::com_ptr<ID3D11Buffer> m_vertexBuffer;
 		std::vector<unsigned int> m_subBufferVertexIndices;
+		std::vector<winrt::Windows::Foundation::Rect> m_regionsOfInterest;
 
 		BaseVertexBuffer();
 		void putSquare(structures::VertexTexCoord buffer[], int index, float x1, float y1, float x2, float y2, float s1, float t1, float s2, float t2);
@@ -38,6 +39,7 @@ namespace vbo {
 		virtual void Initialise(DX::DeviceResources* resources) = 0;
 		void Activate(ID3D11DeviceContext3* context);
 		void Reset();
+		int RegionOfInterestAt(float xNormalised, float yNormalised);
 
 		inline bool IsValid() { return m_isValid; }
 		inline unsigned int IndexOfSubBuffer(int index) { return m_subBufferVertexIndices[index]; }

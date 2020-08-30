@@ -36,6 +36,7 @@ void vbo::SettingsNavigatingImagesVertexBuffer::Initialise(DX::DeviceResources* 
 	putSquare(sceneVertices, 0, w1, h1, w2, h2, 0.0f, 1.0f, 1.0f, 0.0f);
 
 	m_subBufferVertexIndices = { 0, 6 };
+	m_regionsOfInterest = {};
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = sceneVertices;

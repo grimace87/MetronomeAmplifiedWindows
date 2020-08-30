@@ -46,6 +46,7 @@ void vbo::SettingsDetailsTranslucentOverlayVertexBuffer::Initialise(DX::DeviceRe
 	putSquare(sceneVertices, 36, w3, h3, w4, h4, 0.5f, 0.5f, 0.0f, 0.0f);
 
 	m_subBufferVertexIndices = { 0, 42 };
+	m_regionsOfInterest = {};
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = sceneVertices;

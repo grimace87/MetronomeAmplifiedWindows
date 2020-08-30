@@ -91,6 +91,8 @@ void vbo::SettingsNavigatingTextsVertexBuffer::Initialise(DX::DeviceResources* r
 	bufferIndex += 6 * labels[8].length();
 	m_subBufferVertexIndices[9] = bufferIndex;
 
+	m_regionsOfInterest = {};
+
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
 	vertexBufferData.pSysMem = vboData.data();

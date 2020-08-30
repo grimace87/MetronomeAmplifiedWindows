@@ -60,6 +60,14 @@ void vbo::MainScreenIconsVertexBuffer::Initialise(DX::DeviceResources* resources
 	putSquareCentredInside(sceneVertices, 30, w8, hLowerIconsLabelTop, w9, h3, 0.25f, 1.0f, 0.5f, 0.5f, size);
 
 	m_subBufferVertexIndices = { 0, 36 };
+	m_regionsOfInterest = {
+		{ hIcon1Left, hIconLabelBottom, hIcon2Left - hIcon1Left, hIconTop - hIconLabelBottom },
+		{ hIcon2Left, hIconLabelBottom, hIcon3Left - hIcon2Left, hIconTop - hIconLabelBottom },
+		{ hIcon3Left, hIconLabelBottom, hIcon4Left - hIcon3Left, hIconTop - hIconLabelBottom },
+		{ hIcon4Left, hIconLabelBottom, hIcon4Right - hIcon4Left, hIconTop - hIconLabelBottom },
+		{ w2, h2, w3 - w2, h3 - h2 },
+		{ w8, h2, w9 - w8, h3 - h2 }
+	};
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = sceneVertices;

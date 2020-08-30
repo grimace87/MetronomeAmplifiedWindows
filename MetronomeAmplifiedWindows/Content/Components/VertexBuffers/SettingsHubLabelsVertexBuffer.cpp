@@ -66,6 +66,14 @@ void vbo::SettingsHubLabelsVertexBuffer::Initialise(DX::DeviceResources* resourc
 	bufferIndex += 6 * labels[4].length();
 	m_subBufferVertexIndices[2] = bufferIndex;
 
+	// Regions of interest are only the clickable labels
+	m_regionsOfInterest = {
+		{ leftX, t3, rightX - leftX, t2 - t3 },
+		{ leftX, t4, rightX - leftX, t3 - t4 },
+		{ leftX, t5, rightX - leftX, t4 - t5 },
+		{ leftX, t6, rightX - leftX, t5 - t6 }
+	};
+
 	D3D11_SUBRESOURCE_DATA vertexBufferData;
 	ZeroMemory(&vertexBufferData, sizeof(D3D11_SUBRESOURCE_DATA));
 	vertexBufferData.pSysMem = vboData.data();

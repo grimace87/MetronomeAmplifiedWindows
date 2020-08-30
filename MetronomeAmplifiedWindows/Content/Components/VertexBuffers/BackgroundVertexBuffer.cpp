@@ -19,6 +19,7 @@ void vbo::BackgroundVertexBuffer::Initialise(DX::DeviceResources* resources)
 	putSquare(sceneVertices, 0, -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	m_subBufferVertexIndices = { 0, 6 };
+	m_regionsOfInterest = {};
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = sceneVertices;

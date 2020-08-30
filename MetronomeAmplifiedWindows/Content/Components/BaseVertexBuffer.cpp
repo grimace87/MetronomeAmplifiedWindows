@@ -53,6 +53,19 @@ void vbo::BaseVertexBuffer::putSquareCentredInside(structures::VertexTexCoord bu
 	}
 }
 
+int vbo::BaseVertexBuffer::RegionOfInterestAt(float xNormalised, float yNormalised)
+{
+	for (int i = 0; i < m_regionsOfInterest.size(); i++) {
+		auto& region = m_regionsOfInterest[i];
+		if (xNormalised > region.X && xNormalised < region.X + region.Width) {
+			if (yNormalised > region.Y && yNormalised < region.Y + region.Height) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
 vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 {
 	switch (id) {

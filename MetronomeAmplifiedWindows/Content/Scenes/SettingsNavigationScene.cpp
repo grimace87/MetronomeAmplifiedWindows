@@ -158,7 +158,21 @@ void SettingsNavigationScene::Render()
 
 void SettingsNavigationScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
-	
+	// Make sure VBOs are initialised
+	if (!m_deviceResources->AreShadersFulfilled() || !m_deviceResources->AreTexturesFulfilled() || !m_deviceResources->AreVertexBuffersFulfilled())
+	{
+		return;
+	}
+
+	// Check for regions 0 and 1 in icons VBO
+	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_ICONS);
+	int vboRegion = iconsVertexBuffer->RegionOfInterestAt(normalisedX, normalisedY);
+	if (vboRegion == 0) {
+		MoveToPrevious();
+	}
+	else if (vboRegion == 1) {
+		MoveToNext();
+	}
 }
 
 void SettingsNavigationScene::MoveToNext()

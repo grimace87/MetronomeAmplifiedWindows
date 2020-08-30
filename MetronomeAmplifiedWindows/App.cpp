@@ -166,6 +166,6 @@ void MetronomeAmplifiedWindows::App::OnPointerPressed(winrt::Windows::UI::Core::
 	DirectX::XMFLOAT2 position = DirectX::XMFLOAT2(args.CurrentPoint().Position().X, args.CurrentPoint().Position().Y);
 	winrt::Windows::Foundation::Size size = m_deviceResources->GetOutputSize();
 	float normalisedX = 2.0f * position.x / size.Width - 1.0f;
-	float normalisedY = 1.0f - (2.0f * position.y / size.Height - 1.0f);
+	float normalisedY = -2.0f * position.y / size.Height + 1.0f;
 	m_main->OnPointerPressed(normalisedX, normalisedY);
 }

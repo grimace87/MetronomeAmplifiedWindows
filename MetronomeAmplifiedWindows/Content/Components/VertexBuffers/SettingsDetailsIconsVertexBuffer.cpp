@@ -41,6 +41,10 @@ void vbo::SettingsDetailsIconsVertexBuffer::Initialise(DX::DeviceResources* reso
 	putSquare(sceneVertices, 6, w3, h1, w4, h2, 1.0f, 0.5f, 0.875f, 1.0f);
 
 	m_subBufferVertexIndices = { 0, 12 };
+	m_regionsOfInterest = {
+		{ w1, h1, w2 - w1, h2 - h1 },
+		{ w3, h1, w4 - w3, h2 - h1 }
+	};
 
 	D3D11_SUBRESOURCE_DATA vertexBufferData = { 0 };
 	vertexBufferData.pSysMem = sceneVertices;

@@ -126,5 +126,16 @@ void MainSceneRenderer::Render()
 
 void MainSceneRenderer::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
-	stackHost->pushScene(new SettingsHubScene(m_deviceResources));
+	// Make sure VBOs are initialised
+	if (!m_deviceResources->AreShadersFulfilled() || !m_deviceResources->AreTexturesFulfilled() || !m_deviceResources->AreVertexBuffersFulfilled())
+	{
+		return;
+	}
+
+	// Check for region 2 in icons VBO
+	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::MAIN_SCREEN_ICONS);
+	int vboRegion = iconsVertexBuffer->RegionOfInterestAt(normalisedX, normalisedY);
+	if (vboRegion == 2) {
+		stackHost->pushScene(new SettingsHubScene(m_deviceResources));
+	}
 }

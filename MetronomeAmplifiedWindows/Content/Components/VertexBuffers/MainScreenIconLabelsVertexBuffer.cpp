@@ -20,6 +20,8 @@ void vbo::MainScreenIconLabelsVertexBuffer::Initialise(DX::DeviceResources* reso
 		return;
 	}
 
+	m_regionsOfInterest = {};
+
 	// Guidelines from MainScreenBackgroundVertexBuffer
 	winrt::Windows::Foundation::Size size = resources->GetOutputSize();
 	const float marginLogicalInches = 0.25f;

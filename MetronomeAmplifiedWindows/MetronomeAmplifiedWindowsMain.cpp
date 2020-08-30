@@ -17,12 +17,8 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	Scene* firstScene = new MainSceneRenderer(m_deviceResources);
 	m_sceneStack.push(firstScene);
 
-	// TODO: Change the timer settings if you want something other than the default variable timestep mode.
-	// e.g. for 60 FPS fixed timestep update logic, call:
-	/*
-	m_timer.SetFixedTimeStep(true);
-	m_timer.SetTargetElapsedSeconds(1.0 / 60);
-	*/
+	// Initialise time-related variables
+	m_lastTimeUpdate = m_timer.GetElapsedTicks();
 }
 
 MetronomeAmplifiedWindowsMain::~MetronomeAmplifiedWindowsMain()
@@ -37,9 +33,12 @@ void MetronomeAmplifiedWindowsMain::Update()
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
+		uint64_t currentTicks = m_timer.GetElapsedTicks();
+		double timeDiffSeconds = m_timer.TicksToSeconds(currentTicks - m_lastTimeUpdate);
+		m_lastTimeUpdate = currentTicks;
 		Scene* topScene = GetTopScene();
 		if (topScene != nullptr) {
-			topScene->Update(m_timer);
+			topScene->Update(timeDiffSeconds);
 		}
 	});
 }

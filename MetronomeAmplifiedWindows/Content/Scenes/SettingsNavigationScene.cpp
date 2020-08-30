@@ -9,9 +9,15 @@ using namespace MetronomeAmplifiedWindows;
 
 // Loads vertex and pixel shaders from files and instantiates the cube geometry.
 SettingsNavigationScene::SettingsNavigationScene(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
-	m_deviceResources(deviceResources)
+	m_deviceResources(deviceResources),
+	m_identityMatrix{ DirectX::XMMatrixIdentity() },
+	m_transformLeftMatrix{ DirectX::XMMatrixIdentity() },
+	m_transformRightMatrix{ DirectX::XMMatrixIdentity() },
+	m_isAnimating(false),
+	m_focusCard(0),
+	m_animateToTheRight(false),
+	m_animationProgress(0.0f)
 {
-	m_identityMatrix = DirectX::XMMatrixIdentity();
 }
 
 std::vector<shader::ClassId> SettingsNavigationScene::GetRequiredShaders()
@@ -40,8 +46,9 @@ std::vector<vbo::ClassId> SettingsNavigationScene::GetRequiredSizeDependentVerte
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
-void SettingsNavigationScene::Update(DX::StepTimer const& timer)
+void SettingsNavigationScene::Update(double timeDiffSeconds)
 {
+	UpdateMatrices(timeDiffSeconds);
 }
 
 // Renders one frame using the vertex and pixel shaders.
@@ -152,4 +159,60 @@ void SettingsNavigationScene::Render()
 void SettingsNavigationScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
 {
 	
+}
+
+void SettingsNavigationScene::MoveToNext()
+{
+	if (m_isAnimating || (m_focusCard >= 7)) {
+		return;
+	}
+	m_focusCard++;
+	m_isAnimating = true;
+	m_animateToTheRight = false;
+	m_animationProgress = 0.0f;
+}
+
+void SettingsNavigationScene::MoveToPrevious()
+{
+	if (m_isAnimating || (m_focusCard == 0)) {
+		return;
+	}
+	m_focusCard--;
+	m_isAnimating = true;
+	m_animateToTheRight = true;
+	m_animationProgress = 0.0f;
+}
+
+void SettingsNavigationScene::UpdateMatrices(double timeDeltaSeconds)
+{
+	const float animationDuration = 0.3f;
+	if (m_isAnimating) {
+		m_animationProgress += (float)(timeDeltaSeconds / animationDuration);
+		if (m_animationProgress >= 1.0f) {
+			m_transformRightMatrix = DirectX::XMMatrixIdentity();
+			m_animationProgress = 1.0f;
+			m_isAnimating = false;
+			return;
+		}
+		const float scaleOut = 0.66666667f + animationDuration / (9.0f * m_animationProgress + 3.0f * animationDuration);
+		const float scaleIn = 0.66666667f + animationDuration / (9.0f * (1.0f - m_animationProgress) + 3.0f * animationDuration);
+
+		if (m_animateToTheRight) {
+			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixTranslation(2.0f * (-1.0f + m_animationProgress) / scaleIn, 0.0f, 0.0f),
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
+			m_transformRightMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixTranslation(2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
+		} else {
+			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixTranslation(-2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
+			m_transformRightMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixTranslation(2.0f * (1.0f - m_animationProgress) / scaleIn, 0.0f, 0.0f),
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
+		}
+	} else {
+		m_transformLeftMatrix = DirectX::XMMatrixIdentity();
+	}
 }

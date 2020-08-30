@@ -11,7 +11,7 @@ namespace MetronomeAmplifiedWindows
 	public:
 		SettingsNavigationScene(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		void ReleaseDeviceDependentResources();
-		virtual void Update(DX::StepTimer const& timer) override;
+		virtual void Update(double timeDiffSeconds) override;
 
 		// Renderable
 		virtual void Render() override;
@@ -32,6 +32,18 @@ namespace MetronomeAmplifiedWindows
 
 		// Matrices for shuffling cards around
 		DirectX::XMMATRIX m_identityMatrix;
+		DirectX::XMMATRIX m_transformLeftMatrix;
+		DirectX::XMMATRIX m_transformRightMatrix;
+
+		// State for animating
+		bool m_isAnimating;
+		int m_focusCard;
+		bool m_animateToTheRight;
+		float m_animationProgress;
+
+		void MoveToNext();
+		void MoveToPrevious();
+		void UpdateMatrices(double timeDeltaSeconds);
 	};
 }
 

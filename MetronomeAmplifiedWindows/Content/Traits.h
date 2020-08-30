@@ -9,7 +9,7 @@ class StackHost;
 class Renderable {
 public:
 	virtual void Render() = 0;
-	virtual void Update(DX::StepTimer const& timer) = 0;
+	virtual void Update(double timeDiffSeconds) = 0;
 };
 
 class UsesCachedResources {

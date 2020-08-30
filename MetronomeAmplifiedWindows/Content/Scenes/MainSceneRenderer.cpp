@@ -39,7 +39,7 @@ std::vector<vbo::ClassId> MainSceneRenderer::GetRequiredSizeDependentVertexBuffe
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
-void MainSceneRenderer::Update(DX::StepTimer const& timer)
+void MainSceneRenderer::Update(double timeDiffSeconds)
 {
 }
 

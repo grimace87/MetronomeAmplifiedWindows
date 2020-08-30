@@ -11,7 +11,7 @@ namespace MetronomeAmplifiedWindows
 	public:
 		MainSceneRenderer(const std::shared_ptr<DX::DeviceResources>& deviceResources);
 		void ReleaseDeviceDependentResources();
-		virtual void Update(DX::StepTimer const& timer) override;
+		virtual void Update(double timeDiffSeconds) override;
 
 		// Renderable
 		virtual void Render() override;

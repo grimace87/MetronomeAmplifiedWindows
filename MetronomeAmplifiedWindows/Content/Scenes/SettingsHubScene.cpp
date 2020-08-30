@@ -39,7 +39,7 @@ std::vector<vbo::ClassId> SettingsHubScene::GetRequiredSizeDependentVertexBuffer
 }
 
 // Called once per frame, updates the cbuffer struct as needed.
-void SettingsHubScene::Update(DX::StepTimer const& timer)
+void SettingsHubScene::Update(double timeDiffSeconds)
 {
 }
 

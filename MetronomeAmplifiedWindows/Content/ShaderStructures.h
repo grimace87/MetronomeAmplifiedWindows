@@ -2,12 +2,10 @@
 
 namespace structures
 {
-	// Constant buffer used to send MVP matrices to the vertex shader.
-	struct ModelViewProjectionConstantBuffer
+	// Constant buffer used to send a single (model) matrix to the vertex shader.
+	struct TransformConstantBuffer
 	{
-		DirectX::XMFLOAT4X4 model;
-		DirectX::XMFLOAT4X4 view;
-		DirectX::XMFLOAT4X4 projection;
+		DirectX::XMMATRIX transform;
 	};
 
 	// Constant buffer for RGBA paint colour
@@ -16,11 +14,11 @@ namespace structures
 		DirectX::XMFLOAT4 color;
 	};
 
-	// Used to send position and color per-vertex data to the vertex shader.
-	struct VertexPositionColor
+	// Constant buffer for RGBA paint colour and transformation matrix
+	struct TransformPaintColorConstantBuffer
 	{
-		DirectX::XMFLOAT3 pos;
-		DirectX::XMFLOAT3 color;
+        DirectX::XMMATRIX transform;
+		DirectX::XMFLOAT4 color;
 	};
 
 	// Used to send position and texture coordinate per-vertex data to the vertex shader

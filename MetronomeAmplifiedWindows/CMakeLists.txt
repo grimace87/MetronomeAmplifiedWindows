@@ -25,16 +25,24 @@ set(LIBRARY_SOURCES
         Common/Font.cpp
         Content/Components/BaseShader.cpp
         Content/Components/Shaders/AlphaTextureShader.cpp
+        Content/Components/Shaders/AlphaTextureTransformShader.cpp
         Content/Components/Shaders/FontShader.cpp
+        Content/Components/Shaders/FontTransformShader.cpp
         Content/Components/BaseTexture.cpp
         Content/Components/Textures/FontTexture.cpp
         Content/Components/Textures/IconsTexture.cpp
         Content/Components/Textures/OverlayTexture.cpp
+        Content/Components/Textures/SampleImageTexture.cpp
         Content/Components/Textures/WoodTexture.cpp
         Content/Components/BaseVertexBuffer.cpp
         Content/Components/VertexBuffers/BackgroundVertexBuffer.cpp
-        "Content/Components/VertexBuffers/MainScreenIconLabelsVertexBuffer.cpp"
+        Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp
+        Content/Components/VertexBuffers/MainScreenIconLabelsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsDetailsIconsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsDetailsTranslucentOverlayVertexBuffer.cpp
         Content/Components/VertexBuffers/SettingsHubLabelsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsNavigatingImagesVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsNavigatingTextsVertexBuffer.cpp
         Content/Scenes/MainSceneRenderer.cpp
         Content/ShaderCache.cpp
         Content/TextureCache.cpp

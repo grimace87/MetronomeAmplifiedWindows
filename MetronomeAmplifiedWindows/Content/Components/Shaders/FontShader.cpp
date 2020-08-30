@@ -13,9 +13,14 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> shader::FontShader::makeInputDescription()
 	};
 }
 
-bool shader::FontShader::HasConstantBuffer()
+bool shader::FontShader::VertexShaderUsesConstantBuffer()
 {
-	return true;
+    return false;
+}
+
+bool shader::FontShader::PixelShaderUsesConstantBuffer()
+{
+    return true;
 }
 
 UINT shader::FontShader::GetConstantBufferSize()

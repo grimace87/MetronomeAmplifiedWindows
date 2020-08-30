@@ -6,7 +6,9 @@ namespace shader {
 
 	enum class ClassId {
 		ALPHA_TEXTURE,
-		FONT
+		ALPHA_TRANSFORM_TEXTURE,
+		FONT,
+		FONT_TRANSFORM
 	};
 
 	class BaseShader {
@@ -23,8 +25,11 @@ namespace shader {
 		BaseShader(const wchar_t* vertexShaderFile, const wchar_t* pixelShaderFile);
 		virtual std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() = 0;
 		virtual UINT GetConstantBufferSize() = 0;
-		virtual bool HasConstantBuffer() = 0;
+		virtual bool VertexShaderUsesConstantBuffer() = 0;
+		virtual bool PixelShaderUsesConstantBuffer() = 0;
 		virtual void* GetConstantBufferData() = 0;
+
+		inline bool HasConstantBuffer() { return VertexShaderUsesConstantBuffer() || PixelShaderUsesConstantBuffer();  }
 
 	public:
 		std::wstring vertexShaderAssetName;

@@ -9,7 +9,8 @@ namespace shader
 		AlphaTexture();
 	protected:
 		std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;
-		bool HasConstantBuffer() override;
+		bool VertexShaderUsesConstantBuffer() override;
+		bool PixelShaderUsesConstantBuffer() override;
 		UINT GetConstantBufferSize() override;
 		void* GetConstantBufferData() override;
 	};

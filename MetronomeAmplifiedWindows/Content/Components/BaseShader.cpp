@@ -2,7 +2,9 @@
 #include "BaseShader.h"
 
 #include "Shaders/AlphaTextureShader.h"
+#include "Shaders/AlphaTextureTransformShader.h"
 #include "Shaders/FontShader.h"
+#include "Shaders/FontTransformShader.h"
 #include "../../Common/DirectXHelper.h"
 
 shader::BaseShader::BaseShader(const wchar_t* vertexShaderFile, const wchar_t* pixelShaderFile) :
@@ -110,13 +112,25 @@ void shader::BaseShader::Activate(ID3D11DeviceContext3* context)
 			0
 		);
 
-		context->PSSetConstantBuffers1(
-			0,
-			1,
-			&constantBuffer,
-			nullptr,
-			nullptr
-		);
+		if (VertexShaderUsesConstantBuffer()) {
+			context->VSSetConstantBuffers1(
+				0,
+				1,
+				&constantBuffer,
+				nullptr,
+				nullptr
+			);
+		}
+
+		if (PixelShaderUsesConstantBuffer()) {
+			context->PSSetConstantBuffers1(
+				0,
+				1,
+				&constantBuffer,
+				nullptr,
+				nullptr
+			);
+		}
 	}
 }
 
@@ -135,8 +149,12 @@ shader::BaseShader* shader::BaseShader::NewFromClassId(ClassId id)
 	switch (id) {
 	case ClassId::ALPHA_TEXTURE:
 		return new AlphaTexture();
+    case ClassId::ALPHA_TRANSFORM_TEXTURE:
+        return new AlphaTextureTransformShader();
 	case ClassId::FONT:
 		return new FontShader();
+    case ClassId::FONT_TRANSFORM:
+        return new FontTransformShader();
 	default:
 		throw std::exception("Requested shader class does not exist");
 	}

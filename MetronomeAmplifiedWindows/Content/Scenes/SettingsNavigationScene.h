@@ -29,6 +29,9 @@ namespace MetronomeAmplifiedWindows
 	private:
 		// Cached pointer to device resources.
 		std::shared_ptr<DX::DeviceResources> m_deviceResources;
+
+		// Matrices for shuffling cards around
+		DirectX::XMMATRIX m_identityMatrix;
 	};
 }
 

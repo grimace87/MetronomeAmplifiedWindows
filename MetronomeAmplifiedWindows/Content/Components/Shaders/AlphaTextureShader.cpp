@@ -13,7 +13,12 @@ std::vector<D3D11_INPUT_ELEMENT_DESC> shader::AlphaTexture::makeInputDescription
 	};
 }
 
-bool shader::AlphaTexture::HasConstantBuffer()
+bool shader::AlphaTexture::VertexShaderUsesConstantBuffer()
+{
+	return false;
+}
+
+bool shader::AlphaTexture::PixelShaderUsesConstantBuffer()
 {
 	return false;
 }

@@ -81,7 +81,7 @@ vbo::BaseVertexBuffer* vbo::BaseVertexBuffer::NewFromClassId(ClassId id)
 
 void vbo::BaseVertexBuffer::Activate(ID3D11DeviceContext3* context)
 {
-	// Each vertex is one instance of the VertexPositionColor struct.
+	// Each vertex is one instance of the VertexTexCoord struct.
 	UINT stride = sizeof(structures::VertexTexCoord);
 	UINT offset = 0;
 	ID3D11Buffer* vertexBuffer = m_vertexBuffer.get();

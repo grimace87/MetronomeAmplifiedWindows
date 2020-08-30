@@ -2,7 +2,8 @@
 #include "SettingsNavigationScene.h"
 
 #include "../Common/DirectXHelper.h"
-#include "../Components/Shaders/FontShader.h"
+#include "../Components/Shaders/AlphaTextureTransformShader.h"
+#include "../Components/Shaders/FontTransformShader.h"
 
 using namespace MetronomeAmplifiedWindows;
 
@@ -10,11 +11,12 @@ using namespace MetronomeAmplifiedWindows;
 SettingsNavigationScene::SettingsNavigationScene(const std::shared_ptr<DX::DeviceResources>& deviceResources) :
 	m_deviceResources(deviceResources)
 {
+	m_identityMatrix = DirectX::XMMatrixIdentity();
 }
 
 std::vector<shader::ClassId> SettingsNavigationScene::GetRequiredShaders()
 {
-	return { shader::ClassId::ALPHA_TEXTURE, shader::ClassId::FONT };
+	return { shader::ClassId::ALPHA_TRANSFORM_TEXTURE, shader::ClassId::FONT_TRANSFORM };
 }
 
 std::vector<texture::ClassId> SettingsNavigationScene::GetRequiredSizeIndependentTextures()
@@ -54,7 +56,8 @@ void SettingsNavigationScene::Render()
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
 	// Set main shader
-	auto mainShader = m_deviceResources->GetShader(shader::ClassId::ALPHA_TEXTURE);
+	auto mainShader = dynamic_cast<shader::AlphaTextureTransformShader*>(m_deviceResources->GetShader(shader::ClassId::ALPHA_TRANSFORM_TEXTURE));
+	mainShader->SetTransform(m_identityMatrix);
 	mainShader->Activate(context);
 
 	// Set the blend state
@@ -74,7 +77,7 @@ void SettingsNavigationScene::Render()
 		backgroundVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
-
+	
 	// Set the texture for the translucent overlay vertices
 	auto overlayTexture = m_deviceResources->GetTexture(texture::ClassId::OVERLAY_TEXTURE);
 	overlayTexture->Activate(context);
@@ -116,10 +119,11 @@ void SettingsNavigationScene::Render()
 		screenshotsVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
-
+	
 	// Set font shader
-	shader::FontShader* fontShader = dynamic_cast<shader::FontShader*>(m_deviceResources->GetShader(shader::ClassId::FONT));
+	shader::FontTransformShader* fontShader = dynamic_cast<shader::FontTransformShader*>(m_deviceResources->GetShader(shader::ClassId::FONT_TRANSFORM));
 	fontShader->SetPaintColor(1.0f, 1.0f, 1.0f, 1.0f);
+	fontShader->SetTransform(m_identityMatrix);
 	fontShader->Activate(context);
 
 	// Set the font texture and VBO
@@ -133,7 +137,7 @@ void SettingsNavigationScene::Render()
 		fontVertexBuffer->VerticesInSubBuffer(0),
 		fontVertexBuffer->IndexOfSubBuffer(0)
 	);
-
+	
 	// Change font colour
 	fontShader->SetPaintColor(0.0f, 0.0f, 0.0f, 1.0f);
 	fontShader->Activate(context);

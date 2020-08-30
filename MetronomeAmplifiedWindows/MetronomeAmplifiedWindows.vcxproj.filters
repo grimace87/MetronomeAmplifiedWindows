@@ -47,9 +47,6 @@
     <Filter Include="Assets\Definitions">
       <UniqueIdentifier>{d87b7c3b-fc5e-49a1-b3e9-1e7949b19705}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Content\Shaders">
-      <UniqueIdentifier>{18bdbc96-79b3-4163-8930-ee9f41b738d5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Content\Scenes">
       <UniqueIdentifier>{fbf82771-6ec1-4eb5-92d4-392e49f656b2}</UniqueIdentifier>
     </Filter>
@@ -67,6 +64,9 @@
     </Filter>
     <Filter Include="Content\Components\VertexBuffers">
       <UniqueIdentifier>{750d79b4-4205-43b8-bfb5-261e5f8ce3a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Content\ShaderSource">
+      <UniqueIdentifier>{18bdbc96-79b3-4163-8930-ee9f41b738d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +157,12 @@
     <ClCompile Include="Content\Components\VertexBuffers\SettingsNavigatingTextsVertexBuffer.cpp">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Components\Shaders\AlphaTextureTransformShader.cpp">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Content\Components\Shaders\FontTransformShader.cpp">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
@@ -246,6 +252,12 @@
     <ClInclude Include="Content\Components\VertexBuffers\SettingsNavigatingTextsVertexBuffer.h">
       <Filter>Content\Components\VertexBuffers</Filter>
     </ClInclude>
+    <ClInclude Include="Content\Components\Shaders\AlphaTextureTransformShader.h">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Components\Shaders\FontTransformShader.h">
+      <Filter>Content\Components\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\StoreLogo.png">
@@ -274,16 +286,28 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Content\ShaderSource\AlphaTexturePixelShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\ShaderSource</Filter>
     </FxCompile>
     <FxCompile Include="Content\ShaderSource\AlphaTextureVertexShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\ShaderSource</Filter>
     </FxCompile>
     <FxCompile Include="Content\ShaderSource\FontPixelShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\ShaderSource</Filter>
     </FxCompile>
     <FxCompile Include="Content\ShaderSource\FontVertexShader.hlsl">
-      <Filter>Content\Shaders</Filter>
+      <Filter>Content\ShaderSource</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\AlphaTextureTransformPixelShader.hlsl">
+      <Filter>Content\ShaderSource</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\AlphaTextureTransformVertexShader.hlsl">
+      <Filter>Content\ShaderSource</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontTransformPixelShader.hlsl">
+      <Filter>Content\ShaderSource</Filter>
+    </FxCompile>
+    <FxCompile Include="Content\ShaderSource\FontTransformVertexShader.hlsl">
+      <Filter>Content\ShaderSource</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

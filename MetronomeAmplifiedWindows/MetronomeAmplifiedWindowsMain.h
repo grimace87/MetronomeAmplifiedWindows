@@ -36,6 +36,5 @@ namespace MetronomeAmplifiedWindows
 
 		// Rendering loop timer.
 		DX::StepTimer m_timer;
-		uint64_t m_lastTimeUpdate;
 	};
 }

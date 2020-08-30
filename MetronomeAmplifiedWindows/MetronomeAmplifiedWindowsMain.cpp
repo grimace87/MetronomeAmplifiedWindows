@@ -16,9 +16,6 @@ MetronomeAmplifiedWindowsMain::MetronomeAmplifiedWindowsMain(const std::shared_p
 	// Content initialisation
 	Scene* firstScene = new MainSceneRenderer(m_deviceResources);
 	m_sceneStack.push(firstScene);
-
-	// Initialise time-related variables
-	m_lastTimeUpdate = m_timer.GetElapsedTicks();
 }
 
 MetronomeAmplifiedWindowsMain::~MetronomeAmplifiedWindowsMain()
@@ -33,12 +30,9 @@ void MetronomeAmplifiedWindowsMain::Update()
 	// Update scene objects.
 	m_timer.Tick([&]()
 	{
-		uint64_t currentTicks = m_timer.GetElapsedTicks();
-		double timeDiffSeconds = m_timer.TicksToSeconds(currentTicks - m_lastTimeUpdate);
-		m_lastTimeUpdate = currentTicks;
 		Scene* topScene = GetTopScene();
 		if (topScene != nullptr) {
-			topScene->Update(timeDiffSeconds);
+			topScene->Update(m_timer.GetElapsedSeconds());
 		}
 	});
 }

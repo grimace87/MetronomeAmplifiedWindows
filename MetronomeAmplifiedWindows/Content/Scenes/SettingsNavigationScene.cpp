@@ -62,84 +62,105 @@ void SettingsNavigationScene::Render()
 
 	auto context = m_deviceResources->GetD3DDeviceContext();
 
-	// Set main shader
+	// Get shaders, textures and VBOs
 	auto mainShader = dynamic_cast<shader::AlphaTextureTransformShader*>(m_deviceResources->GetShader(shader::ClassId::ALPHA_TRANSFORM_TEXTURE));
+	shader::FontTransformShader* fontShader = dynamic_cast<shader::FontTransformShader*>(m_deviceResources->GetShader(shader::ClassId::FONT_TRANSFORM));
+	auto woodenTexture = m_deviceResources->GetTexture(texture::ClassId::WOOD_TEXTURE);
+	auto overlayTexture = m_deviceResources->GetTexture(texture::ClassId::OVERLAY_TEXTURE);
+	auto iconsTexture = m_deviceResources->GetTexture(texture::ClassId::ICONS_TEXTURE);
+	auto screenshotsTexture = m_deviceResources->GetTexture(texture::ClassId::SAMPLE_IMAGE);
+	auto fontTexture = m_deviceResources->GetTexture(texture::ClassId::FONT_TEXTURE);
+	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
+	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_OVERLAY);
+	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_ICONS);
+	auto screenshotsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_IMAGES);
+	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_TEXTS);
+
+	// Draw the background
 	mainShader->SetTransform(m_identityMatrix);
 	mainShader->Activate(context);
-
-	// Set the blend state
-	m_deviceResources->ActivateBlendState();
-
-	// Set the texture for the first few vertices
-	auto woodenTexture = m_deviceResources->GetTexture(texture::ClassId::WOOD_TEXTURE);
 	woodenTexture->Activate(context);
-
-	// Set the sampler state
+	m_deviceResources->ActivateBlendState();
 	m_deviceResources->ActivateLinearSamplerState();
-
-	// Draw background
-	auto backgroundVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::BG);
 	backgroundVertexBuffer->Activate(context);
 	context->Draw(
 		backgroundVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
 	
-	// Set the texture for the translucent overlay vertices
-	auto overlayTexture = m_deviceResources->GetTexture(texture::ClassId::OVERLAY_TEXTURE);
-	overlayTexture->Activate(context);
-
-	// Set the sampler state
+	// Draw the overlay and the sample image, once or twice depending on animation state
 	m_deviceResources->ActivatePointSamplerState();
+	if (!m_isAnimating) {
 
-	// Draw overlay
-	auto overlayVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_OVERLAY);
-	overlayVertexBuffer->Activate(context);
-	context->Draw(
-		overlayVertexBuffer->VerticesInSubBuffer(0),
-		0
-	);
+		overlayTexture->Activate(context);
+		overlayVertexBuffer->Activate(context);
+		context->Draw(
+			overlayVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
 
-	// Set the texture for the UI icon vertices
-	auto iconsTexture = m_deviceResources->GetTexture(texture::ClassId::ICONS_TEXTURE);
-	iconsTexture->Activate(context);
+		screenshotsTexture->Activate(context);
+		screenshotsVertexBuffer->Activate(context);
+		context->Draw(
+			screenshotsVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
+	}
+	else {
 
-	// Set the sampler state
-	m_deviceResources->ActivateLinearSamplerState();
+		// Draw overlay twice
+		overlayTexture->Activate(context);
+		overlayVertexBuffer->Activate(context);
+		mainShader->SetTransform(m_transformLeftMatrix);
+		mainShader->Activate(context);
+		context->Draw(
+			overlayVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
+		mainShader->SetTransform(m_transformRightMatrix);
+		mainShader->Activate(context);
+		context->Draw(
+			overlayVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
+
+		mainShader->SetTransform(m_identityMatrix);
+		mainShader->Activate(context);
+
+		// Draw image twice
+		screenshotsTexture->Activate(context);
+		screenshotsVertexBuffer->Activate(context);
+		mainShader->SetTransform(m_transformLeftMatrix);
+		mainShader->Activate(context);
+		context->Draw(
+			screenshotsVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
+		mainShader->SetTransform(m_transformRightMatrix);
+		mainShader->Activate(context);
+		context->Draw(
+			screenshotsVertexBuffer->VerticesInSubBuffer(0),
+			0
+		);
+	}
 
 	// Draw icons
-	auto iconsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_DETAILS_ICONS);
+	mainShader->SetTransform(m_identityMatrix);
+	mainShader->Activate(context);
+	iconsTexture->Activate(context);
+	m_deviceResources->ActivateLinearSamplerState();
 	iconsVertexBuffer->Activate(context);
 	context->Draw(
 		iconsVertexBuffer->VerticesInSubBuffer(0),
 		0
 	);
-
-	// Set the texture for the screenshots
-	auto screenshotsTexture = m_deviceResources->GetTexture(texture::ClassId::SAMPLE_IMAGE);
-	screenshotsTexture->Activate(context);
-
-	// Draw screenshot
-	auto screenshotsVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_IMAGES);
-	screenshotsVertexBuffer->Activate(context);
-	context->Draw(
-		screenshotsVertexBuffer->VerticesInSubBuffer(0),
-		0
-	);
 	
-	// Set font shader
-	shader::FontTransformShader* fontShader = dynamic_cast<shader::FontTransformShader*>(m_deviceResources->GetShader(shader::ClassId::FONT_TRANSFORM));
+	// Draw heading in white
 	fontShader->SetPaintColor(1.0f, 1.0f, 1.0f, 1.0f);
 	fontShader->SetTransform(m_identityMatrix);
 	fontShader->Activate(context);
-
-	// Set the font texture and VBO
-	auto fontTexture = m_deviceResources->GetTexture(texture::ClassId::FONT_TEXTURE);
 	fontTexture->Activate(context);
-	auto fontVertexBuffer = m_deviceResources->GetVertexBuffer(vbo::ClassId::HELP_NAVIGATING_TEXTS);
 	fontVertexBuffer->Activate(context);
-
-	// Draw heading
 	context->Draw(
 		fontVertexBuffer->VerticesInSubBuffer(0),
 		fontVertexBuffer->IndexOfSubBuffer(0)
@@ -147,13 +168,38 @@ void SettingsNavigationScene::Render()
 	
 	// Change font colour
 	fontShader->SetPaintColor(0.0f, 0.0f, 0.0f, 1.0f);
-	fontShader->Activate(context);
 
-	// Draw text
-	context->Draw(
-		fontVertexBuffer->VerticesInSubBuffer(1),
-		fontVertexBuffer->IndexOfSubBuffer(1)
-	);
+	// Draw one or two contents sections depending on animation state
+	if (!m_isAnimating) {
+		fontShader->Activate(context);
+		context->Draw(
+			fontVertexBuffer->VerticesInSubBuffer(m_focusCard + 1),
+			fontVertexBuffer->IndexOfSubBuffer(m_focusCard + 1)
+		);
+	}
+	else {
+		int leftSide;
+		if (m_animateToTheRight) {
+			leftSide = m_focusCard;
+		}
+		else {
+			leftSide = m_focusCard - 1;
+		}
+
+		fontShader->SetTransform(m_transformLeftMatrix);
+		fontShader->Activate(context);
+		context->Draw(
+			fontVertexBuffer->VerticesInSubBuffer(leftSide + 1),
+			fontVertexBuffer->IndexOfSubBuffer(leftSide + 1)
+		);
+
+		fontShader->SetTransform(m_transformRightMatrix);
+		fontShader->Activate(context);
+		context->Draw(
+			fontVertexBuffer->VerticesInSubBuffer(leftSide + 2),
+			fontVertexBuffer->IndexOfSubBuffer(leftSide + 2)
+		);
+	}
 }
 
 void SettingsNavigationScene::OnPointerPressed(StackHost* stackHost, float normalisedX, float normalisedY)
@@ -212,19 +258,19 @@ void SettingsNavigationScene::UpdateMatrices(double timeDeltaSeconds)
 		const float scaleIn = 0.66666667f + animationDuration / (9.0f * (1.0f - m_animationProgress) + 3.0f * animationDuration);
 
 		if (m_animateToTheRight) {
-			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
+			m_transformLeftMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * (-1.0f + m_animationProgress) / scaleIn, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
-			m_transformRightMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f)));
+			m_transformRightMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f)));
 		} else {
-			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
+			m_transformLeftMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(-2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
-			m_transformRightMatrix = DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f)));
+			m_transformRightMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * (1.0f - m_animationProgress) / scaleIn, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f)));
 		}
 	} else {
 		m_transformLeftMatrix = DirectX::XMMatrixIdentity();

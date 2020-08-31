@@ -33,9 +33,10 @@ void* shader::FontTransformShader::GetConstantBufferData()
     return &m_constantBufferData;
 }
 
-void shader::FontTransformShader::SetTransform(DirectX::XMMATRIX& transformMatrix)
+// Transpose matrix; must be stored column-major in cbuffer
+void shader::FontTransformShader::SetTransform(DirectX::XMMATRIX& transformMatrixRowMajor)
 {
-    m_constantBufferData.transform = transformMatrix;
+    m_constantBufferData.transform = DirectX::XMMatrixTranspose(transformMatrixRowMajor);
 }
 
 void shader::FontTransformShader::SetPaintColor(float r, float g, float b, float a)

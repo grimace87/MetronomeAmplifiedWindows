@@ -8,7 +8,7 @@ namespace shader
     class FontTransformShader : public BaseShader {
     public:
         FontTransformShader();
-        void SetTransform(DirectX::XMMATRIX& transformMatrix);
+        void SetTransform(DirectX::XMMATRIX& transformMatrixRowMajor);
         void SetPaintColor(float r, float g, float b, float a);
     protected:
         std::vector<D3D11_INPUT_ELEMENT_DESC> makeInputDescription() override;

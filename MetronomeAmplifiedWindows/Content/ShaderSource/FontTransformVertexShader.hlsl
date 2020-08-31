@@ -1,4 +1,4 @@
-
+// Single (model) transformation matrix, stored column-major, plus print colour
 cbuffer TransformPaintColorConstantBuffer : register(b0)
 {
 	matrix transform;

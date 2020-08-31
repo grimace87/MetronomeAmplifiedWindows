@@ -1,4 +1,4 @@
-// A constant buffer that stores a single transformation matrix (model matrix; view and projection are identities)
+// Single (model) transformation matrix, stored column-major
 cbuffer TransformConstantBuffer : register(b0)
 {
 	matrix transform;

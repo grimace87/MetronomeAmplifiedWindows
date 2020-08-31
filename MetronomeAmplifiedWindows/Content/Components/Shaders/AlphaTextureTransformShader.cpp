@@ -33,7 +33,8 @@ void* shader::AlphaTextureTransformShader::GetConstantBufferData()
     return &m_constantBufferData;
 }
 
-void shader::AlphaTextureTransformShader::SetTransform(DirectX::XMMATRIX& transformMatrix)
+// Transpose matrix; must be stored column-major in cbuffer
+void shader::AlphaTextureTransformShader::SetTransform(DirectX::XMMATRIX& transformMatrixRowMajor)
 {
-    m_constantBufferData.transform = transformMatrix;
+    m_constantBufferData.transform = DirectX::XMMatrixTranspose(transformMatrixRowMajor);
 }

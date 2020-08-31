@@ -258,19 +258,19 @@ void SettingsNavigationScene::UpdateMatrices(double timeDeltaSeconds)
 		const float scaleIn = 0.66666667f + animationDuration / (9.0f * (1.0f - m_animationProgress) + 3.0f * animationDuration);
 
 		if (m_animateToTheRight) {
-			m_transformLeftMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
+			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * (-1.0f + m_animationProgress) / scaleIn, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f)));
-			m_transformRightMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
+			m_transformRightMatrix = DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f)));
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
 		} else {
-			m_transformLeftMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
+			m_transformLeftMatrix = DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(-2.0f * m_animationProgress / scaleOut, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f)));
-			m_transformRightMatrix = DirectX::XMMatrixTranspose(DirectX::XMMatrixMultiply(
+				DirectX::XMMatrixScaling(scaleOut, scaleOut, 1.0f));
+			m_transformRightMatrix = DirectX::XMMatrixMultiply(
 				DirectX::XMMatrixTranslation(2.0f * (1.0f - m_animationProgress) / scaleIn, 0.0f, 0.0f),
-				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f)));
+				DirectX::XMMatrixScaling(scaleIn, scaleIn, 1.0f));
 		}
 	} else {
 		m_transformLeftMatrix = DirectX::XMMatrixIdentity();

@@ -48,17 +48,32 @@ set(LIBRARY_SOURCES
         Content/TextureCache.cpp
         Content/VertexBufferCache.cpp
         App.cpp
-        MetronomeAmplifiedWindowsMain.cpp)
+        MetronomeAmplifiedWindowsMain.cpp
+        Content/Components/VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.cpp
+        Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp
+        Content/Scenes/SettingsNavigationScene.cpp
+        Content/Components/Textures/SampleImageTexture.cpp
+        Content/Components/VertexBuffers/SettingsDetailsTranslucentOverlayVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsDetailsIconsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsNavigatingTextsVertexBuffer.cpp
+        Content/Components/VertexBuffers/SettingsNavigatingImagesVertexBuffer.cpp)
 
 set(SHADER_SOURCES
         Content/AlphaTextureVertexShader.hlsl
-        Content/AlphaTexturePixelShader.hlsl)
+        Content/AlphaTexturePixelShader.hlsl
+        Content/AlphaTextureTransformVertexShader.hlsl
+        Content/AlphaTextureTransformPixelShader.hlsl
+        Content/FontVertexShader.hlsl
+        Content/FontPixelShader.hlsl
+        Content/FontTransformVertexShader.hlsl
+        Content/FontTransformPixelShader.hlsl)
 
 include_directories(.)
 
-add_library(${PROJECT_NAME} STATIC ${LIBRARY_SOURCES} "Content/Components/VertexBuffers/MainScreenTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/MainScreenIconsVertexBuffer.cpp"  "Content/Scenes/SettingsNavigationScene.cpp" "Content/Components/Textures/SampleImageTexture.cpp" "Content/Components/VertexBuffers/SettingsDetailsTranslucentOverlayVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsDetailsIconsVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsNavigatingTextsVertexBuffer.cpp" "Content/Components/VertexBuffers/SettingsNavigatingImagesVertexBuffer.cpp")
+add_library(${PROJECT_NAME} STATIC
+        ${LIBRARY_SOURCES})
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE ./pch.h)
+target_precompile_headers(${PROJECT_NAME} PRIVATE pch.h)
 
 # Many of the things below are MSVC-specific or WIN32-specific
 target_compile_options(${PROJECT_NAME} PRIVATE /fp:fast)
